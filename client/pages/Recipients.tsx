@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Box,
   Tabs,
@@ -32,7 +32,7 @@ export default function Recipients() {
   const [ucid, setUcid] = useState('7897129879879841');
   const [ucidOpen, setUcidOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -48,10 +48,71 @@ export default function Recipients() {
     setUcid(event.target.value);
   };
 
+  const filterControls = (
+    <>
+      <FormControl fullWidth variant="outlined">
+        <InputLabel sx={{ fontSize: '12px' }}>Contact type</InputLabel>
+        <Select
+          value={contactType}
+          onChange={handleContactTypeChange}
+          label="Contact type"
+          sx={{
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'rgba(0, 0, 0, 0.23)',
+            },
+            '& .MuiSelect-select': {
+              fontSize: '16px',
+              lineHeight: '24px',
+              letterSpacing: '0.15px',
+            },
+          }}
+        >
+          <MenuItem value="Customer">Customer</MenuItem>
+          <MenuItem value="Partner">Partner</MenuItem>
+          <MenuItem value="Agent">Agent</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl fullWidth variant="outlined">
+        <InputLabel
+          sx={{
+            fontSize: '12px',
+            color: ucidOpen ? '#2196F3' : 'rgba(0, 0, 0, 0.60)',
+          }}
+        >
+          UCID
+        </InputLabel>
+        <Select
+          value={ucid}
+          onChange={handleUcidChange}
+          onOpen={() => setUcidOpen(true)}
+          onClose={() => setUcidOpen(false)}
+          label="UCID"
+          startAdornment={<Search sx={{ color: 'rgba(0, 0, 0, 0.54)', mr: 1 }} />}
+          sx={{
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: ucidOpen ? '#2196F3' : 'rgba(0, 0, 0, 0.23)',
+              borderWidth: ucidOpen ? '2px' : '1px',
+            },
+            '& .MuiSelect-select': {
+              fontSize: '16px',
+              lineHeight: '24px',
+              letterSpacing: '0.15px',
+            },
+          }}
+        >
+          <MenuItem value="7897129879879841">7897129879879841 (Default)</MenuItem>
+          <MenuItem value="9879789712879841">9879789712879841</MenuItem>
+          <MenuItem value="7987987897129841">7987987897129841</MenuItem>
+        </Select>
+      </FormControl>
+    </>
+  );
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#FFF' }}>
       <MainNavigation />
-      
+
       {isMobile ? (
         <>
           <Drawer
@@ -62,8 +123,17 @@ export default function Recipients() {
           >
             <BookingIDs />
           </Drawer>
-          <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <Box sx={{ p: 2, borderBottom: '1px solid #E0E0E0', display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Box
+              sx={{
+                p: 2,
+                borderBottom: '1px solid #E0E0E0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                bgcolor: '#FAFAFA',
+              }}
+            >
               <IconButton onClick={() => setDrawerOpen(true)}>
                 <MenuIcon />
               </IconButton>
@@ -72,27 +142,19 @@ export default function Recipients() {
             <ContentArea
               activeTab={activeTab}
               handleTabChange={handleTabChange}
-              contactType={contactType}
-              handleContactTypeChange={handleContactTypeChange}
-              ucid={ucid}
-              handleUcidChange={handleUcidChange}
-              ucidOpen={ucidOpen}
-              setUcidOpen={setUcidOpen}
+              filterControls={filterControls}
+              showFiltersInContent
             />
           </Box>
         </>
       ) : (
         <>
           <BookingIDs />
+          <FiltersColumn>{filterControls}</FiltersColumn>
           <ContentArea
             activeTab={activeTab}
             handleTabChange={handleTabChange}
-            contactType={contactType}
-            handleContactTypeChange={handleContactTypeChange}
-            ucid={ucid}
-            handleUcidChange={handleUcidChange}
-            ucidOpen={ucidOpen}
-            setUcidOpen={setUcidOpen}
+            filterControls={filterControls}
           />
         </>
       )}
@@ -100,24 +162,34 @@ export default function Recipients() {
   );
 }
 
+function FiltersColumn({ children }: { children: ReactNode }) {
+  return (
+    <Box
+      sx={{
+        width: 404,
+        borderRight: '1px solid #E0E0E0',
+        p: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+        justifyContent: 'flex-start',
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
 function ContentArea({
   activeTab,
   handleTabChange,
-  contactType,
-  handleContactTypeChange,
-  ucid,
-  handleUcidChange,
-  ucidOpen,
-  setUcidOpen,
+  filterControls,
+  showFiltersInContent = false,
 }: {
   activeTab: number;
   handleTabChange: (_event: React.SyntheticEvent, newValue: number) => void;
-  contactType: string;
-  handleContactTypeChange: (event: SelectChangeEvent) => void;
-  ucid: string;
-  handleUcidChange: (event: SelectChangeEvent) => void;
-  ucidOpen: boolean;
-  setUcidOpen: (open: boolean) => void;
+  filterControls: ReactNode;
+  showFiltersInContent?: boolean;
 }) {
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -146,67 +218,19 @@ function ContentArea({
 
       {activeTab === 0 && (
         <Box sx={{ flex: 1, overflow: 'auto' }}>
-          <Box sx={{ p: { xs: 2, md: '24px' }, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: '356px' }}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel sx={{ fontSize: '12px' }}>Contact type</InputLabel>
-                <Select
-                  value={contactType}
-                  onChange={handleContactTypeChange}
-                  label="Contact type"
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(0, 0, 0, 0.23)',
-                    },
-                    '& .MuiSelect-select': {
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      letterSpacing: '0.15px',
-                    },
-                  }}
-                >
-                  <MenuItem value="Customer">Customer</MenuItem>
-                  <MenuItem value="Partner">Partner</MenuItem>
-                  <MenuItem value="Agent">Agent</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth variant="outlined">
-                <InputLabel
-                  sx={{
-                    fontSize: '12px',
-                    color: ucidOpen ? '#2196F3' : 'rgba(0, 0, 0, 0.60)',
-                  }}
-                >
-                  UCID
-                </InputLabel>
-                <Select
-                  value={ucid}
-                  onChange={handleUcidChange}
-                  onOpen={() => setUcidOpen(true)}
-                  onClose={() => setUcidOpen(false)}
-                  label="UCID"
-                  startAdornment={
-                    <Search sx={{ color: 'rgba(0, 0, 0, 0.54)', mr: 1 }} />
-                  }
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: ucidOpen ? '#2196F3' : 'rgba(0, 0, 0, 0.23)',
-                      borderWidth: ucidOpen ? '2px' : '1px',
-                    },
-                    '& .MuiSelect-select': {
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      letterSpacing: '0.15px',
-                    },
-                  }}
-                >
-                  <MenuItem value="7897129879879841">7897129879879841 (Default)</MenuItem>
-                  <MenuItem value="9879789712879841">9879789712879841</MenuItem>
-                  <MenuItem value="7987987897129841">7987987897129841</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+          <Box
+            sx={{
+              p: { xs: 2, md: '24px' },
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '24px',
+            }}
+          >
+            {showFiltersInContent && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {filterControls}
+              </Box>
+            )}
 
             <Alert
               icon={<Info sx={{ color: '#0288D1' }} />}
@@ -223,7 +247,8 @@ function ContentArea({
                 fontWeight: 400,
                 p: '6px 16px',
                 borderRadius: '4px',
-                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)',
+                boxShadow:
+                  '0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)',
               }}
             >
               It's currently 06:37 in customer's local time (based on the primary phone of member)
@@ -237,32 +262,40 @@ function ContentArea({
       )}
 
       {activeTab === 1 && (
-        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
-          <Box sx={{ textAlign: 'center' }}>
-            <Article sx={{ fontSize: 64, color: 'rgba(0, 0, 0, 0.23)', mb: 2 }} />
-            <Box sx={{ fontSize: '20px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.87)' }}>
-              Templates
-            </Box>
-            <Box sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.60)', mt: 1 }}>
-              Template content will be added here
-            </Box>
-          </Box>
-        </Box>
+        <PlaceholderPanel
+          icon={<Article sx={{ fontSize: 64, color: 'rgba(0, 0, 0, 0.23)' }} />}
+          title="Templates"
+          subtitle="Template content will be added here"
+        />
       )}
 
       {activeTab === 2 && (
-        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
-          <Box sx={{ textAlign: 'center' }}>
-            <Mail sx={{ fontSize: 64, color: 'rgba(0, 0, 0, 0.23)', mb: 2 }} />
-            <Box sx={{ fontSize: '20px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.87)' }}>
-              Draft
-            </Box>
-            <Box sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.60)', mt: 1 }}>
-              Draft content will be added here
-            </Box>
-          </Box>
-        </Box>
+        <PlaceholderPanel
+          icon={<Mail sx={{ fontSize: 64, color: 'rgba(0, 0, 0, 0.23)' }} />}
+          title="Draft"
+          subtitle="Draft content will be added here"
+        />
       )}
+    </Box>
+  );
+}
+
+function PlaceholderPanel({
+  icon,
+  title,
+  subtitle,
+}: {
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
+      <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ mb: 2 }}>{icon}</Box>
+        <Box sx={{ fontSize: '20px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.87)' }}>{title}</Box>
+        <Box sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.60)', mt: 1 }}>{subtitle}</Box>
+      </Box>
     </Box>
   );
 }
