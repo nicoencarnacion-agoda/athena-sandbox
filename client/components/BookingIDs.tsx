@@ -22,7 +22,7 @@ export default function BookingIDs() {
     >
       <Box
         sx={{
-          p: 2,
+          p: '16px 24px',
           borderBottom: '1px solid #E0E0E0',
           display: 'flex',
           justifyContent: 'space-between',
@@ -53,7 +53,7 @@ export default function BookingIDs() {
         />
       </Box>
 
-      <Box sx={{ px: 3, py: 1 }}>
+      <Box sx={{ px: '24px', py: 0, display: 'flex', flexDirection: 'column', gap: '9px' }}>
         {bookings.map((booking) => (
           <FormControlLabel
             key={booking.id}

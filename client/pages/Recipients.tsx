@@ -68,7 +68,7 @@ export default function Recipients() {
 
         {activeTab === 0 && (
           <Box sx={{ flex: 1, overflow: 'auto' }}>
-            <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box sx={{ p: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: '356px' }}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel sx={{ fontSize: '12px' }}>Contact type</InputLabel>
@@ -140,8 +140,12 @@ export default function Recipients() {
                     color: '#0288D1',
                   },
                   fontSize: '14px',
-                  lineHeight: '143%',
+                  lineHeight: '20.02px',
                   letterSpacing: '0.17px',
+                  fontWeight: 400,
+                  p: '6px 16px',
+                  borderRadius: '4px',
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)',
                 }}
               >
                 It's currently 06:37 in customer's local time (based on the primary phone of member)

@@ -40,7 +40,7 @@ export default function MainNavigation() {
         flexShrink: 0,
       }}
     >
-      <Box sx={{ p: 1, pt: 2 }}>
+      <Box sx={{ p: '8px 6px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '64px' }}>
         <Avatar
           sx={{
             bgcolor: '#4DD0E1',
@@ -48,6 +48,9 @@ export default function MainNavigation() {
             height: 40,
             color: 'rgba(0, 0, 0, 0.87)',
             fontSize: '20px',
+            fontWeight: 400,
+            lineHeight: '20px',
+            letterSpacing: '0.14px',
           }}
         >
           N
@@ -59,11 +62,13 @@ export default function MainNavigation() {
           <Box
             key={index}
             sx={{
-              p: 1,
+              p: '8px',
               position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              justifyContent: 'center',
+              gap: 0,
               bgcolor: item.active ? '#37474F' : 'transparent',
               '&:hover': {
                 bgcolor: item.active ? '#37474F' : 'rgba(255,255,255,0.05)',
@@ -71,20 +76,22 @@ export default function MainNavigation() {
               cursor: 'pointer',
             }}
           >
-            <Box sx={{ color: '#E3F2FD', mb: 0.5 }}>
+            <Box sx={{ color: '#E3F2FD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {item.icon}
             </Box>
             <Typography
               sx={{
-                color: '#fff',
+                color: 'rgba(0, 0, 0, 0.87)',
                 fontSize: '12px',
                 textAlign: 'center',
-                lineHeight: '166%',
+                lineHeight: '19.92px',
                 letterSpacing: '0.4px',
                 whiteSpace: 'pre-line',
+                fontWeight: 400,
+                mt: 0,
               }}
             >
-              {item.label}
+              <span style={{ color: '#fff' }}>{item.label}</span>
             </Typography>
             {item.badge && (
               <Badge
