@@ -139,6 +139,8 @@ export default function Drafts() {
         flexDirection: "column",
         height: "100%",
         bgcolor: "#FFF",
+        position: "relative",
+        overflow: "hidden", // Prevent content from overflowing
       }}
     >
       <Box
@@ -146,8 +148,8 @@ export default function Drafts() {
           display: "flex",
           flexDirection: "column",
           gap: "24px",
-          p: "16px 24px 24px 24px",
-          flex: 1,
+          p: "16px 24px 80px 24px",
+          height: "100%",
           overflow: "auto",
         }}
       >
@@ -158,12 +160,12 @@ export default function Drafts() {
             variant="standard"
             label="From"
             value={fromEmail}
-            onChange={handleFromChange}
             SelectProps={{
               IconComponent: ArrowDropDown,
-              renderValue: (value) => (
+              onChange: handleFromChange,
+              renderValue: (value: unknown) => (
                 <Chip
-                  label={value}
+                  label={value as string}
                   size="small"
                   sx={{
                     height: "24px",
@@ -342,7 +344,7 @@ export default function Drafts() {
             <Box
               sx={{
                 p: "40px 242px 0 242px",
-                flex: 1,
+                height: "calc(100vh - 400px)", // Fixed height for the content area
                 overflow: "auto",
                 display: "flex",
                 justifyContent: "center",
@@ -442,6 +444,11 @@ export default function Drafts() {
           p: "16px 24px",
           borderTop: "1px solid #E0E0E0",
           bgcolor: "#FFF",
+          position: "absolute", // Changed from fixed to absolute
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1,
         }}
       >
         <Box

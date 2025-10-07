@@ -1,3 +1,4 @@
+// Copying content from Recipients.tsx with the new name
 import { ReactNode, useState } from "react";
 import {
   Box,
@@ -29,7 +30,8 @@ import RecipientsTable from "../components/RecipientsTable";
 import Templates from "./Templates";
 import Drafts from "./Drafts";
 
-export default function Recipients() {
+export default function ClickToEmail() {
+  // ... rest of the Recipients component code, just renamed the component
   const [activeTab, setActiveTab] = useState(0);
   const [contactType, setContactType] = useState("Customer");
   const [ucid, setUcid] = useState("7897129879879841");
@@ -51,42 +53,41 @@ export default function Recipients() {
     setUcid(event.target.value);
   };
 
-    const filterControls = (
-      <>
-        <TextField
-          select
-          fullWidth
-          variant="outlined"
-          label="Contact type"
-          value={contactType}
-          onChange={handleContactTypeChange}
-        >
-          <MenuItem value="Customer">Customer</MenuItem>
-          <MenuItem value="Partner">Partner</MenuItem>
-          <MenuItem value="Agent">Agent</MenuItem>
-        </TextField>
+  const filterControls = (
+    <>
+      <TextField
+        select
+        fullWidth
+        variant="outlined"
+        label="Contact type"
+        value={contactType}
+        onChange={handleContactTypeChange}
+      >
+        <MenuItem value="Customer">Customer</MenuItem>
+        <MenuItem value="Partner">Partner</MenuItem>
+        <MenuItem value="Agent">Agent</MenuItem>
+      </TextField>
 
-        <TextField
-          select
-          fullWidth
-          variant="outlined"
-          label="UCID"
-          value={ucid}
-          onChange={handleUcidChange}
-          onFocus={() => setUcidOpen(true)}
-          onBlur={() => setUcidOpen(false)}
-          InputProps={{
-            startAdornment: (
-              <Search sx={{ color: "rgba(0, 0, 0, 0.54)", mr: 1 }} />
-            ),
-          }}
-        >
-          <MenuItem value="7897129879879841">7897129879879841 (Default)</MenuItem>
-          <MenuItem value="9879789712879841">9879789712879841</MenuItem>
-          <MenuItem value="7987987897129841">7987987897129841</MenuItem>
-        </TextField>
-
-      </>
+      <TextField
+        select
+        fullWidth
+        variant="outlined"
+        label="UCID"
+        value={ucid}
+        onChange={handleUcidChange}
+        onFocus={() => setUcidOpen(true)}
+        onBlur={() => setUcidOpen(false)}
+        InputProps={{
+          startAdornment: (
+            <Search sx={{ color: "rgba(0, 0, 0, 0.54)", mr: 1 }} />
+          ),
+        }}
+      >
+        <MenuItem value="7897129879879841">7897129879879841 (Default)</MenuItem>
+        <MenuItem value="9879789712879841">9879789712879841</MenuItem>
+        <MenuItem value="7987987897129841">7987987897129841</MenuItem>
+      </TextField>
+    </>
   );
 
   return (
@@ -251,44 +252,6 @@ function ContentArea({
       {activeTab === 1 && <Templates />}
 
       {activeTab === 2 && <Drafts />}
-    </Box>
-  );
-}
-
-function PlaceholderPanel({
-  icon,
-  title,
-  subtitle,
-}: {
-  icon: ReactNode;
-  title: string;
-  subtitle: string;
-}) {
-  return (
-    <Box
-      sx={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        p: 3,
-      }}
-    >
-      <Box sx={{ textAlign: "center" }}>
-        <Box sx={{ mb: 2 }}>{icon}</Box>
-        <Box
-          sx={{
-            fontSize: "20px",
-            fontWeight: 500,
-            color: "rgba(0, 0, 0, 0.87)",
-          }}
-        >
-          {title}
-        </Box>
-        <Box sx={{ fontSize: "14px", color: "rgba(0, 0, 0, 0.60)", mt: 1 }}>
-          {subtitle}
-        </Box>
-      </Box>
     </Box>
   );
 }
