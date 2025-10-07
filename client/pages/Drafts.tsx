@@ -598,6 +598,7 @@ export default function Drafts() {
               textTransform: 'none',
               px: '22px',
               py: '8px',
+              color: '#FFFFFF',
             }}
           >
             Send
