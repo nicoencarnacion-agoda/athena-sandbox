@@ -308,7 +308,7 @@ export default function Drafts() {
             InputProps={{
               sx: {
                 ...inputRootBaseStyles,
-                '& .MuiInput-input': {
+                '& .MuiInputBase-input': {
                   ...inputTypographyStyles,
                   padding: 0,
                 },
