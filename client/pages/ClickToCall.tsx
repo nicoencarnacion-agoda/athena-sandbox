@@ -123,36 +123,27 @@ export default function ClickToCall() {
               </ToggleButtonGroup>
             </Box>
 
-            <FormControl variant="outlined" fullWidth>
-              <InputLabel
-                sx={{
-                  fontSize: "12px",
-                  lineHeight: "12px",
+            <TextField
+              select
+              fullWidth
+              variant="outlined"
+              label="Contact type"
+              value={contactType}
+              onChange={(event: SelectChangeEvent) =>
+                setContactType(event.target.value as string)
+              }
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontSize: "16px",
+                  lineHeight: "24px",
                   letterSpacing: "0.15px",
-                  "&.Mui-focused": {
-                    fontSize: "12px",
-                  },
-                }}
-              >
-                Contact type
-              </InputLabel>
-              <Select
-                value={contactType}
-                onChange={(e) => setContactType(e.target.value)}
-                label="Contact type"
-                sx={{
-                  "& .MuiSelect-select": {
-                    fontSize: "16px",
-                    lineHeight: "24px",
-                    letterSpacing: "0.15px",
-                  },
-                }}
-              >
-                <MenuItem value="Customer">Customer</MenuItem>
-                <MenuItem value="Partner">Partner</MenuItem>
-                <MenuItem value="Internal">Internal</MenuItem>
-              </Select>
-            </FormControl>
+                },
+              }}
+            >
+              <MenuItem value="Customer">Customer</MenuItem>
+              <MenuItem value="Partner">Partner</MenuItem>
+              <MenuItem value="Internal">Internal</MenuItem>
+            </TextField>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <Typography
