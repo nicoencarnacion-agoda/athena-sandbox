@@ -110,55 +110,17 @@ export default function MainNavigation() {
         </Avatar>
       </Box>
       
-      <Box sx={{ flex: 1, width: '100%' }}>
-        {navItems.map((item, index) => (
-          <Box
-            key={index}
-            sx={{
-              p: '8px',
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 0,
-              bgcolor: item.active ? '#37474F' : 'transparent',
-              '&:hover': {
-                bgcolor: item.active ? '#37474F' : 'rgba(255,255,255,0.05)',
-              },
-              cursor: 'pointer',
-            }}
-          >
-            <Box sx={{ color: '#E3F2FD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {item.icon}
-            </Box>
-            <Typography
-              sx={{
-                color: 'rgba(0, 0, 0, 0.87)',
-                fontSize: '12px',
-                textAlign: 'center',
-                lineHeight: '19.92px',
-                letterSpacing: '0.4px',
-                whiteSpace: 'pre-line',
-                fontWeight: 400,
-                mt: 0,
-              }}
-            >
-              <span style={{ color: '#fff' }}>{item.label}</span>
-            </Typography>
-            {item.badge && (
-              <Badge
-                badgeContent={item.badge}
-                color="warning"
-                sx={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 14,
-                }}
-              />
-            )}
-          </Box>
-        ))}
+      <Box
+        sx={{
+          flex: 1,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Box>{primaryNavItems.map(renderNavItem)}</Box>
+        <Box sx={{ mt: 4 }}>{secondaryNavItems.map(renderNavItem)}</Box>
       </Box>
 
       <Box sx={{ p: 1.5, mb: 2 }}>
