@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Tabs,
@@ -17,38 +17,83 @@ import {
 } from "@mui/icons-material";
 import Layout from "../components/Layout";
 
-interface BIDTab {
-  id: string;
-  label: string;
-}
-
 interface RequestTab {
   id: string;
   label: string;
   locked?: boolean;
 }
 
-const bidTabs: BIDTab[] = [
-  { id: "bid1", label: "BID: 00000001" },
-  { id: "bid2", label: "BID: 00000003" },
-  { id: "bid3", label: "BID: 00000003" },
-];
+interface BIDTab {
+  id: string;
+  label: string;
+  defaultRequests: RequestTab[];
+}
 
-const requestTabs: RequestTab[] = [
-  { id: "change-period", label: "Change period of stay" },
-  { id: "cancellation", label: "Cancellation" },
-  { id: "amendment", label: "Amendment", locked: true },
+const initialBIDs: BIDTab[] = [
+  {
+    id: "bid-1",
+    label: "BID: 48293641",
+    defaultRequests: [
+      { id: "guest-name", label: "Add/change guest name" },
+      { id: "special-request", label: "Add/change special request" },
+      { id: "agent-assisted", label: "Adjust/modify Agent Assisted Booking" },
+      { id: "benefits", label: "Amend Benefits" },
+      { id: "occupancy", label: "Amend occupancy/rooms/extrabed" },
+      { id: "stay-period", label: "Change period of stay" },
+      { id: "room-type", label: "Change room type" },
+    ],
+  },
+  {
+    id: "bid-2",
+    label: "BID: 71582064",
+    defaultRequests: [
+      { id: "change-period", label: "Change period of stay" },
+      { id: "cancel-booking", label: "Request to cancel booking" },
+      { id: "not-honored", label: "Reservation not honored" },
+    ],
+  },
+  {
+    id: "bid-3",
+    label: "BID: 90314726",
+    defaultRequests: [
+      { id: "partial-refund", label: "Request partial refund" },
+      { id: "price-match", label: "Price match inquiry" },
+      { id: "early-checkin", label: "Request early check-in" },
+      { id: "late-checkout", label: "Request late checkout" },
+    ],
+  },
 ];
 
 export default function Handling() {
+  const [bidTabs, setBidTabs] = useState<BIDTab[]>(initialBIDs);
+  const [bidRequests, setBidRequests] = useState<Record<string, RequestTab[]>>(() =>
+    initialBIDs.reduce<Record<string, RequestTab[]>>((acc, bid) => {
+      acc[bid.id] = bid.defaultRequests;
+      return acc;
+    }, {})
+  );
   const [activeBIDTab, setActiveBIDTab] = useState(0);
   const [activeRequestTab, setActiveRequestTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openBIDs, setOpenBIDs] = useState<BIDTab[]>(bidTabs);
-  const [openRequests, setOpenRequests] = useState<RequestTab[]>(requestTabs);
+
+  const activeBid = bidTabs[activeBIDTab];
+
+  const activeRequests = useMemo(() => {
+    if (!activeBid) {
+      return [];
+    }
+    return bidRequests[activeBid.id] ?? [];
+  }, [activeBid, bidRequests]);
+
+  useEffect(() => {
+    if (activeRequestTab >= activeRequests.length) {
+      setActiveRequestTab(activeRequests.length > 0 ? activeRequests.length - 1 : 0);
+    }
+  }, [activeRequestTab, activeRequests]);
 
   const handleBIDTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveBIDTab(newValue);
+    setActiveRequestTab(0);
   };
 
   const handleRequestTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -57,19 +102,39 @@ export default function Handling() {
 
   const handleCloseBID = (index: number, event: React.MouseEvent) => {
     event.stopPropagation();
-    const newBIDs = openBIDs.filter((_, i) => i !== index);
-    setOpenBIDs(newBIDs);
-    if (activeBIDTab >= newBIDs.length) {
-      setActiveBIDTab(Math.max(0, newBIDs.length - 1));
+    const bidToRemove = bidTabs[index];
+    const updatedBids = bidTabs.filter((_, i) => i !== index);
+    const { [bidToRemove.id]: _removed, ...remainingRequests } = bidRequests;
+
+    setBidTabs(updatedBids);
+    setBidRequests(remainingRequests);
+
+    if (updatedBids.length === 0) {
+      setActiveBIDTab(0);
+      setActiveRequestTab(0);
+      return;
+    }
+
+    if (activeBIDTab >= updatedBids.length) {
+      const nextIndex = Math.max(0, updatedBids.length - 1);
+      setActiveBIDTab(nextIndex);
+      setActiveRequestTab(0);
     }
   };
 
   const handleCloseRequest = (index: number, event: React.MouseEvent) => {
     event.stopPropagation();
-    const newRequests = openRequests.filter((_, i) => i !== index);
-    setOpenRequests(newRequests);
-    if (activeRequestTab >= newRequests.length) {
-      setActiveRequestTab(Math.max(0, newRequests.length - 1));
+    if (!activeBid) {
+      return;
+    }
+
+    const currentRequests = bidRequests[activeBid.id] ?? [];
+    const updatedRequests = currentRequests.filter((_, i) => i !== index);
+
+    setBidRequests(prev => ({ ...prev, [activeBid.id]: updatedRequests }));
+
+    if (activeRequestTab >= updatedRequests.length) {
+      setActiveRequestTab(Math.max(0, updatedRequests.length - 1));
     }
   };
 
@@ -119,7 +184,7 @@ export default function Handling() {
               },
             }}
           >
-            {openBIDs.map((bid, index) => (
+            {bidTabs.map((bid, index) => (
               <Tab
                 key={bid.id}
                 label={
@@ -142,10 +207,7 @@ export default function Handling() {
               />
             ))}
           </Tabs>
-          <IconButton
-            size="small"
-            sx={{ color: "rgba(255, 255, 255, 0.56)" }}
-          >
+          <IconButton size="small" sx={{ color: "rgba(255, 255, 255, 0.56)" }}>
             <AddIcon sx={{ fontSize: "20px" }} />
           </IconButton>
         </Box>
@@ -183,7 +245,7 @@ export default function Handling() {
               },
             }}
           >
-            {openRequests.map((request, index) => (
+            {activeRequests.map((request, index) => (
               <Tab
                 key={request.id}
                 disabled={request.locked}
@@ -198,20 +260,19 @@ export default function Handling() {
                       />
                     )}
                     {request.label}
-                    <IconButton
-                      size="small"
-                      onClick={(e) => handleCloseRequest(index, e)}
-                      sx={{
-                        p: 0.5,
-                        ml: 0.5,
-                        color:
-                          index === activeRequestTab && !request.locked
-                            ? "rgba(0, 0, 0, 0.56)"
-                            : "rgba(0, 0, 0, 0.56)",
-                      }}
-                    >
-                      <CloseIcon sx={{ fontSize: "20px" }} />
-                    </IconButton>
+                    {!request.locked && (
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleCloseRequest(index, e)}
+                        sx={{
+                          p: 0.5,
+                          ml: 0.5,
+                          color: "rgba(0, 0, 0, 0.56)",
+                        }}
+                      >
+                        <CloseIcon sx={{ fontSize: "20px" }} />
+                      </IconButton>
+                    )}
                   </Box>
                 }
               />
