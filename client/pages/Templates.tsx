@@ -315,7 +315,7 @@ export default function Templates() {
         </Box>
       </Box>
 
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <Box sx={{ borderBottom: '1px solid #E0E0E0', p: '12px 24px' }}>
           <Typography
             sx={{
@@ -343,7 +343,7 @@ export default function Templates() {
             English
           </Link>
         </Box>
-        <Box sx={{ flex: 1, p: '40px 24px', overflow: 'auto' }}>
+        <Box sx={{ flex: 1, p: '40px 24px', overflow: 'auto', minHeight: 0 }}>
           {selectedScenario && (
             <Typography
               sx={{
@@ -357,6 +357,51 @@ export default function Templates() {
               {selectedScenario.template}
             </Typography>
           )}
+        </Box>
+        <Box
+          sx={{
+            borderTop: '1px solid #E0E0E0',
+            p: '16px 24px',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: '16px',
+            bgcolor: '#FFF',
+          }}
+        >
+          <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            sx={{
+              fontSize: '16px',
+              fontWeight: 500,
+              lineHeight: '26px',
+              letterSpacing: '0.46px',
+              textTransform: 'none',
+              px: '22px',
+              py: '8px',
+            }}
+          >
+            Copy template text
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{
+              fontSize: '16px',
+              fontWeight: 500,
+              lineHeight: '26px',
+              letterSpacing: '0.46px',
+              textTransform: 'none',
+              px: '22px',
+              py: '8px',
+              color: '#FFF',
+            }}
+          >
+            Insert and go to draft
+          </Button>
         </Box>
       </Box>
     </Box>
