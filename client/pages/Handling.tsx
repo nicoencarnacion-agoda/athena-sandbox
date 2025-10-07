@@ -97,7 +97,7 @@ export default function Handling() {
   };
 
   const handleRequestTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    if (!activeRequests.length && newValue !== false) {
+    if (!activeRequests.length) {
       return;
     }
     setActiveRequestTab(newValue);
