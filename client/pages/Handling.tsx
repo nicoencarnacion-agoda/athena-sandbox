@@ -37,10 +37,6 @@ const initialBIDs: BIDTab[] = [
       { id: "guest-name", label: "Add/change guest name" },
       { id: "special-request", label: "Add/change special request" },
       { id: "agent-assisted", label: "Adjust/modify Agent Assisted Booking" },
-      { id: "benefits", label: "Amend Benefits" },
-      { id: "occupancy", label: "Amend occupancy/rooms/extrabed" },
-      { id: "stay-period", label: "Change period of stay" },
-      { id: "room-type", label: "Change room type" },
     ],
   },
   {
@@ -59,7 +55,6 @@ const initialBIDs: BIDTab[] = [
       { id: "partial-refund", label: "Request partial refund" },
       { id: "price-match", label: "Price match inquiry" },
       { id: "early-checkin", label: "Request early check-in" },
-      { id: "late-checkout", label: "Request late checkout" },
     ],
   },
 ];
@@ -324,15 +319,14 @@ export default function Handling() {
             flex: 1,
             display: "flex",
             alignItems: "flex-start",
-            justifyContent: "center",
-            pt: 6,
-            px: 3,
+            justifyContent: "flex-start",
+            p: "24px",
           }}
         >
           <Box
             sx={{
               display: "flex",
-              alignItems: "flex-start",
+              alignItems: "center",
               gap: 2,
               maxWidth: "700px",
               width: "100%",
@@ -378,7 +372,6 @@ export default function Handling() {
                 textTransform: "none",
                 px: "22px",
                 py: "8px",
-                mt: "8px",
                 bgcolor: "#2196F3",
                 "&:hover": {
                   bgcolor: "#1976D2",
