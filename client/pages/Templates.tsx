@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState, ReactNode } from 'react';
 import {
   Box,
   TextField,
@@ -11,29 +11,45 @@ import {
   IconButton,
   Divider,
   Link,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 import { Search, Close, Language } from '@mui/icons-material';
-import { templatesData, refundRelatedScenarios, TemplateCategory, Scenario } from '../data/templatesData';
+import { templatesData, refundRelatedScenarios, Scenario } from '../data/templatesData';
+
+const REQUEST_COLUMN_WIDTH = 260;
+const LEFT_PANEL_WIDTH = 601;
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const highlightText = (text: string, query: string): ReactNode => {
+  if (!query.trim()) return text;
+
+  const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <Box component="span" key={index} sx={{ fontWeight: 700 }}>
+        {part}
+      </Box>
+    ) : (
+      <span key={index}>{part}</span>
+    )
+  );
+};
 
 export default function Templates() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('frequently-used');
+  const [selectedCategory, setSelectedCategory] = useState<string>(templatesData[0]?.id ?? '');
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(
-    templatesData[0].scenarios[0]
+    templatesData[0]?.scenarios[0] ?? null
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // Filter scenarios based on search
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return null;
 
     const query = searchQuery.toLowerCase();
     const results: Array<{ category: string; scenario: Scenario }> = [];
 
-    // Search in main categories
     templatesData.forEach((category) => {
       category.scenarios.forEach((scenario) => {
         if (scenario.label.toLowerCase().includes(query)) {
@@ -42,7 +58,6 @@ export default function Templates() {
       });
     });
 
-    // Search in refund related scenarios
     refundRelatedScenarios.forEach((scenario) => {
       if (scenario.label.toLowerCase().includes(query)) {
         results.push({ category: 'Refund related', scenario });
@@ -52,53 +67,43 @@ export default function Templates() {
     return results;
   }, [searchQuery]);
 
+  const groupedSearchResults = useMemo(() => {
+    if (!filteredResults) return [] as Array<[string, Scenario[]]>;
+
+    const groups = filteredResults.reduce((acc, { category, scenario }) => {
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(scenario);
+      return acc;
+    }, {} as Record<string, Scenario[]>);
+
+    return Object.entries(groups);
+  }, [filteredResults]);
+
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
     const category = templatesData.find((cat) => cat.id === categoryId);
-    if (category && category.scenarios.length > 0) {
-      setSelectedScenario(category.scenarios[0]);
-    }
+    setSelectedScenario(category?.scenarios[0] ?? null);
   };
 
   const handleScenarioClick = (scenario: Scenario) => {
     setSelectedScenario(scenario);
   };
 
-  const highlightText = (text: string, query: string) => {
-    if (!query.trim()) return text;
-
-    const parts = text.split(new RegExp(`(${query})`, 'gi'));
-    return (
-      <>
-        {parts.map((part, index) =>
-          part.toLowerCase() === query.toLowerCase() ? (
-            <Box component="span" key={index} sx={{ fontWeight: 700 }}>
-              {part}
-            </Box>
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
-  };
-
   const currentCategory = templatesData.find((cat) => cat.id === selectedCategory);
+  const scenarioList = currentCategory?.scenarios ?? [];
 
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 42px)', flexDirection: { xs: 'column', md: 'row' } }}>
-      {/* Search and Categories Column */}
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, height: 'calc(100vh - 42px)' }}>
       <Box
         sx={{
-          width: { xs: '100%', md: 601 },
+          width: { xs: '100%', md: LEFT_PANEL_WIDTH },
           borderRight: { xs: 'none', md: '1px solid #E0E0E0' },
           borderBottom: { xs: '1px solid #E0E0E0', md: 'none' },
           display: 'flex',
           flexDirection: 'column',
-          maxHeight: { xs: '50vh', md: 'none' },
+          minHeight: 0,
         }}
       >
-        {/* Search Field */}
         <Box sx={{ p: '12px 16px', borderBottom: '1px solid #E0E0E0' }}>
           <TextField
             fullWidth
@@ -143,18 +148,10 @@ export default function Templates() {
           />
         </Box>
 
-        {/* Categories or Search Results */}
-        <Box sx={{ flex: 1, overflow: 'auto' }}>
+        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           {filteredResults ? (
-            // Search Results
-            <Box>
-              {Object.entries(
-                filteredResults.reduce((acc, { category, scenario }) => {
-                  if (!acc[category]) acc[category] = [];
-                  acc[category].push(scenario);
-                  return acc;
-                }, {} as Record<string, Scenario[]>)
-              ).map(([categoryName, scenarios]) => (
+            <Box sx={{ overflow: 'auto' }}>
+              {groupedSearchResults.map(([categoryName, scenarios]) => (
                 <Box key={categoryName}>
                   <Box sx={{ p: '24px 16px 12px', borderBottom: '1px solid #E0E0E0' }}>
                     <Typography
@@ -172,10 +169,7 @@ export default function Templates() {
                     {scenarios.map((scenario, index) => (
                       <Box key={scenario.id}>
                         <ListItem disablePadding>
-                          <ListItemButton
-                            onClick={() => handleScenarioClick(scenario)}
-                            sx={{ px: 2, py: 1 }}
-                          >
+                          <ListItemButton onClick={() => handleScenarioClick(scenario)} sx={{ px: 2, py: 1 }}>
                             <ListItemText
                               primary={highlightText(scenario.label, searchQuery)}
                               sx={{
@@ -198,109 +192,128 @@ export default function Templates() {
               ))}
             </Box>
           ) : (
-            // Categories List
-            <>
-              <Box sx={{ borderBottom: '1px solid #E0E0E0', p: '12px 16px' }}>
-                <Typography
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', md: 'row' },
+                  borderBottom: '1px solid #E0E0E0',
+                }}
+              >
+                <Box
                   sx={{
-                    fontSize: '20px',
-                    fontWeight: 500,
-                    lineHeight: '160%',
-                    letterSpacing: '0.15px',
+                    width: { xs: '100%', md: REQUEST_COLUMN_WIDTH },
+                    borderRight: { xs: 'none', md: '1px solid #E0E0E0' },
+                    p: '12px 16px',
                   }}
                 >
-                  Request
-                </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: '20px',
+                      fontWeight: 500,
+                      lineHeight: '160%',
+                      letterSpacing: '0.15px',
+                    }}
+                  >
+                    Request
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: '12px 16px' }}>
+                  <Typography
+                    sx={{
+                      fontSize: '20px',
+                      fontWeight: 500,
+                      lineHeight: '160%',
+                      letterSpacing: '0.15px',
+                    }}
+                  >
+                    Scenario
+                  </Typography>
+                </Box>
               </Box>
-              <List sx={{ py: '2px' }}>
-                {templatesData.map((category) => (
-                  <ListItem key={category.id} disablePadding>
-                    <ListItemButton
-                      selected={selectedCategory === category.id}
-                      onClick={() => handleCategoryClick(category.id)}
-                      sx={{
-                        px: 2,
-                        py: 1,
-                        '&.Mui-selected': {
-                          bgcolor: 'rgba(25, 118, 210, 0.08)',
-                        },
-                      }}
-                    >
-                      <ListItemText
-                        primary={category.name}
-                        sx={{
-                          '& .MuiTypography-root': {
-                            fontSize: '16px',
-                            lineHeight: '150%',
-                            letterSpacing: '0.15px',
-                          },
-                        }}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', md: 'row' },
+                  flex: 1,
+                  minHeight: 0,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: { xs: '100%', md: REQUEST_COLUMN_WIDTH },
+                    borderRight: { xs: 'none', md: '1px solid #E0E0E0' },
+                    borderBottom: { xs: '1px solid #E0E0E0', md: 'none' },
+                    overflow: 'auto',
+                  }}
+                >
+                  <List sx={{ py: '2px' }}>
+                    {templatesData.map((category) => (
+                      <ListItem key={category.id} disablePadding>
+                        <ListItemButton
+                          selected={selectedCategory === category.id}
+                          onClick={() => handleCategoryClick(category.id)}
+                          sx={{
+                            px: 2,
+                            py: 1,
+                            '&.Mui-selected': {
+                              bgcolor: 'rgba(25, 118, 210, 0.08)',
+                            },
+                          }}
+                        >
+                          <ListItemText
+                            primary={category.name}
+                            sx={{
+                              '& .MuiTypography-root': {
+                                fontSize: '16px',
+                                lineHeight: '150%',
+                                letterSpacing: '0.15px',
+                              },
+                            }}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+
+                <Box sx={{ flex: 1, overflow: 'auto' }}>
+                  <List sx={{ py: '2px' }}>
+                    {scenarioList.map((scenario) => (
+                      <ListItem key={scenario.id} disablePadding>
+                        <ListItemButton
+                          selected={selectedScenario?.id === scenario.id}
+                          onClick={() => handleScenarioClick(scenario)}
+                          sx={{
+                            px: 2,
+                            py: 1,
+                            '&.Mui-selected': {
+                              bgcolor: 'rgba(25, 118, 210, 0.08)',
+                            },
+                          }}
+                        >
+                          <ListItemText
+                            primary={scenario.label}
+                            sx={{
+                              '& .MuiTypography-root': {
+                                fontSize: '16px',
+                                lineHeight: '150%',
+                                letterSpacing: '0.15px',
+                              },
+                            }}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </Box>
+            </Box>
           )}
         </Box>
       </Box>
 
-      {/* Scenarios Column */}
-      {!filteredResults && currentCategory && (
-        <Box
-          sx={{
-            width: { xs: '100%', md: 341 },
-            borderRight: { xs: 'none', md: '1px solid #E0E0E0' },
-            borderBottom: { xs: '1px solid #E0E0E0', md: 'none' },
-            display: { xs: isMobile ? 'none' : 'flex', md: 'flex' },
-            flexDirection: 'column',
-            maxHeight: { xs: '30vh', md: 'none' },
-          }}
-        >
-          <Box sx={{ borderBottom: '1px solid #E0E0E0', p: '12px 16px' }}>
-            <Typography
-              sx={{
-                fontSize: '20px',
-                fontWeight: 500,
-                lineHeight: '160%',
-                letterSpacing: '0.15px',
-              }}
-            >
-              Scenario
-            </Typography>
-          </Box>
-          <List sx={{ py: '2px', flex: 1, overflow: 'auto' }}>
-            {currentCategory.scenarios.map((scenario) => (
-              <ListItem key={scenario.id} disablePadding>
-                <ListItemButton
-                  selected={selectedScenario?.id === scenario.id}
-                  onClick={() => handleScenarioClick(scenario)}
-                  sx={{
-                    px: 2,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'rgba(25, 118, 210, 0.08)',
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={scenario.label}
-                    sx={{
-                      '& .MuiTypography-root': {
-                        fontSize: '16px',
-                        lineHeight: '150%',
-                        letterSpacing: '0.15px',
-                      },
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-
-      {/* Template Preview Column */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ borderBottom: '1px solid #E0E0E0', p: '12px 24px' }}>
           <Typography
