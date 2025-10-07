@@ -176,87 +176,87 @@ export default function Drafts() {
             </Select>
           </FormControl>
 
-          <FormControl fullWidth variant="standard">
-            <InputLabel
-              shrink={shouldShrinkLabel}
-              onClick={() => inputRef.current?.focus()}
-              sx={{
-                fontSize: '12px',
-                lineHeight: '12px',
-                letterSpacing: '0.15px',
-                color: toFocused ? '#2196F3' : 'rgba(0, 0, 0, 0.60)',
-                cursor: 'text',
-              }}
-            >
-              To
-            </InputLabel>
-            <Box
-              ref={toFieldRef}
-              onClick={() => inputRef.current?.focus()}
-              sx={{
+          <TextField
+            label="To"
+            variant="standard"
+            fullWidth
+            value={toInputValue}
+            onChange={(e) => setToInputValue(e.target.value)}
+            onKeyDown={handleToKeyDown}
+            inputRef={inputRef}
+            InputLabelProps={{
+              shrink: shouldShrinkLabel,
+              sx: labelStyles,
+            }}
+            InputProps={{
+              onClick: () => inputRef.current?.focus(),
+              startAdornment:
+                toEmails.length > 0 ? (
+                  <InputAdornment
+                    position="start"
+                    disablePointerEvents={false}
+                    sx={{
+                      m: 0,
+                      pl: 0,
+                      pr: 0,
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '8px',
+                    }}
+                  >
+                    {toEmails.map((email) => (
+                      <Chip
+                        key={email}
+                        label={email}
+                        size="small"
+                        onDelete={() => handleDeleteEmail(email)}
+                        deleteIcon={
+                          <Cancel
+                            sx={{
+                              fontSize: '16px',
+                              opacity: 0.26,
+                              '&:hover': { opacity: 0.4 },
+                            }}
+                          />
+                        }
+                        sx={{
+                          height: '24px',
+                          fontSize: '14px',
+                          fontWeight: 400,
+                          lineHeight: '18px',
+                          letterSpacing: '0.16px',
+                          bgcolor: 'rgba(0, 0, 0, 0.08)',
+                          borderRadius: '100px',
+                          '& .MuiChip-label': {
+                            px: '10px',
+                          },
+                        }}
+                      />
+                    ))}
+                  </InputAdornment>
+                ) : null,
+              sx: {
+                ...inputRootBaseStyles,
                 display: 'flex',
-                flexWrap: 'wrap',
-                gap: '8px',
-                mt: shouldShrinkLabel ? '18px' : 0,
-                pt: shouldShrinkLabel ? 0 : '6px',
-                pb: paddingBottom,
-                borderBottom: `${borderBottomWidth} solid ${borderBottomColor}`,
                 alignItems: 'center',
-                transition: 'border-color 0.2s ease, border-bottom-width 0.2s ease',
-                cursor: 'text',
-              }}
-            >
-              {toEmails.map((email) => (
-                <Chip
-                  key={email}
-                  label={email}
-                  size="small"
-                  onDelete={() => handleDeleteEmail(email)}
-                  deleteIcon={
-                    <Cancel
-                      sx={{
-                        fontSize: '16px',
-                        opacity: 0.26,
-                        '&:hover': { opacity: 0.4 },
-                      }}
-                    />
-                  }
-                  sx={{
-                    height: '24px',
-                    fontSize: '14px',
-                    fontWeight: 400,
-                    lineHeight: '18px',
-                    letterSpacing: '0.16px',
-                    bgcolor: 'rgba(0, 0, 0, 0.08)',
-                    borderRadius: '100px',
-                    '& .MuiChip-label': {
-                      px: '10px',
-                    },
-                  }}
-                />
-              ))}
-              <input
-                ref={inputRef}
-                type="text"
-                value={toInputValue}
-                onChange={(e) => setToInputValue(e.target.value)}
-                onKeyDown={handleToKeyDown}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
-                style={{
-                  border: 'none',
-                  outline: 'none',
-                  background: 'transparent',
+                flexWrap: 'wrap',
+                gap: toEmails.length > 0 ? '8px' : 0,
+                '& .MuiInput-input': {
+                  ...inputTypographyStyles,
                   flex: 1,
-                  minWidth: '80px',
-                  fontSize: '16px',
-                  fontFamily: 'Roboto, -apple-system, Helvetica, sans-serif',
-                  color: 'rgba(0, 0, 0, 0.87)',
+                  minWidth: '120px',
                   padding: 0,
-                }}
-              />
-            </Box>
-          </FormControl>
+                },
+                '& .MuiInputAdornment-root': {
+                  m: 0,
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                  maxWidth: '100%',
+                },
+              },
+            }}
+          />
 
           <TextField
             label="Subject"
