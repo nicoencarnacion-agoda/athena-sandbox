@@ -326,7 +326,7 @@ export default function Handling() {
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-start",
               gap: 2,
               maxWidth: "700px",
               width: "100%",
@@ -374,9 +374,7 @@ export default function Handling() {
                 py: "8px",
                 bgcolor: "#2196F3",
                 color: "#FFFFFF",
-                alignSelf: "stretch",
-                display: "flex",
-                alignItems: "center",
+                mt: 0,
                 "&:hover": {
                   bgcolor: "#1976D2",
                 },
