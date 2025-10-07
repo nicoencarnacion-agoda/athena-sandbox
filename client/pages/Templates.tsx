@@ -12,13 +12,16 @@ import {
   Divider,
   Link,
   Button,
+  Popover,
+  Grid,
 } from "@mui/material";
 import { Search, Close, Language } from "@mui/icons-material";
 import {
   templatesData,
   refundRelatedScenarios,
   Scenario,
-} from "../data/templatesData";
+} from "../data/templates";
+import { languages, templateTranslations } from "../data/templates";
 
 const REQUEST_COLUMN_WIDTH = 260;
 const LEFT_PANEL_WIDTH = 601;
@@ -51,6 +54,28 @@ export default function Templates() {
     templatesData[0]?.scenarios[0] ?? null,
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("EN");
+  const [languageMenuAnchor, setLanguageMenuAnchor] = useState<null | HTMLElement>(null);
+
+  const handleLanguageClick = (event: React.MouseEvent<HTMLElement>) => {
+    setLanguageMenuAnchor(event.currentTarget);
+  };
+
+  const handleLanguageClose = () => {
+    setLanguageMenuAnchor(null);
+  };
+
+  const handleLanguageSelect = (languageCode: string) => {
+    setSelectedLanguage(languageCode);
+    handleLanguageClose();
+  };
+
+  const getTranslatedTemplate = (scenario: Scenario | null) => {
+    if (!scenario) return "";
+    const translations = templateTranslations[scenario.id];
+    if (!translations) return scenario.template;
+    return translations[selectedLanguage] || scenario.template;
+  };
 
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return null;
@@ -389,17 +414,69 @@ export default function Templates() {
             sx={{ width: 18, height: 18, color: "rgba(0, 0, 0, 0.87)" }}
           />
           <Link
-            href="#"
+            component="button"
+            onClick={handleLanguageClick}
             underline="always"
             sx={{
               color: "rgba(0, 0, 0, 0.87)",
               fontSize: "16px",
               lineHeight: "150%",
               letterSpacing: "0.15px",
+              textAlign: "left",
             }}
           >
-            English
+            {languages.find(lang => lang.code === selectedLanguage)?.name || "English"}
           </Link>
+          <Popover
+            open={Boolean(languageMenuAnchor)}
+            anchorEl={languageMenuAnchor}
+            onClose={handleLanguageClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            PaperProps={{
+              sx: {
+                p: 2,
+                width: 'auto'
+              }
+            }}
+          >
+            <Box 
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: 2,
+                p: 0,
+                width: 'fit-content',
+              }}
+            >
+              {languages.map((language) => (
+                <Button
+                  key={language.code}
+                  onClick={() => handleLanguageSelect(language.code)}
+                  sx={{
+                    justifyContent: 'center',
+                    color: selectedLanguage === language.code ? 'primary.main' : 'rgba(0, 0, 0, 0.87)',
+                    fontSize: '16px',
+                    fontWeight: selectedLanguage === language.code ? 500 : 400,
+                    py: 0.5,
+                    minWidth: '40px',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      color: 'primary.main',
+                    },
+                  }}
+                >
+                  {language.code}
+                </Button>
+              ))}
+            </Box>
+          </Popover>
         </Box>
         <Box sx={{ flex: 1, p: "40px 24px", overflow: "auto", minHeight: 0 }}>
           {selectedScenario && (
@@ -412,7 +489,7 @@ export default function Templates() {
                 whiteSpace: "pre-line",
               }}
             >
-              {selectedScenario.template}
+              {getTranslatedTemplate(selectedScenario)}
             </Typography>
           )}
         </Box>
