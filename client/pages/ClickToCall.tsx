@@ -4,7 +4,6 @@ import {
   Typography,
   ToggleButtonGroup,
   ToggleButton,
-  Select,
   MenuItem,
   TextField,
   Button,
@@ -16,9 +15,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material/Select";
 import {
   Phone as PhoneIcon,
   Add as AddIcon,
