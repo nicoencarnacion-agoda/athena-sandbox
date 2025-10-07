@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Box, Avatar, Badge, Typography } from '@mui/material';
 import {
   Search,
@@ -14,7 +15,14 @@ import {
 } from '@mui/icons-material';
 import agodaLetter from '../assets/logos/agoda-letter.png';
 
-const primaryNavItems = [
+type NavItem = {
+  icon: ReactNode;
+  label: string;
+  badge?: number;
+  active?: boolean;
+};
+
+const primaryNavItems: NavItem[] = [
   { icon: <Search />, label: 'Search', badge: 1 },
   { icon: <EditNote />, label: 'Handling' },
   { icon: <Phone />, label: 'Phone' },
