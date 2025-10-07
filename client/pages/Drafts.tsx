@@ -34,6 +34,28 @@ const emailOptions = [
   'ES-SERVICE@AGODA.COM',
 ];
 
+const DEFAULT_EMAIL_BODY = `Dear Yuiko Majima,
+
+Greetings from Agoda!
+
+With reference booking ID 568308069 as detailed below:
+
+Hotel: Best Western Plus At 20 Sukhumvit
+Room Type: Superior Twin With Breakfast
+City/Country: Bangkok/Thailand
+Arrival: January 9, 2015
+Departure: January 10, 2015
+
+We have received a request from the customer to cancel their booking due to the current novel coronavirus outbreak.
+
+Please note that in accordance with our policy regarding special circumstances, we have cancelled this booking without penalties and have provided a full refund to the customer.
+
+In case you have any concerns, please contact our Accommodation Services Team. You can send an email by logging in to YCS (https://ycs.agoda.com/en-us) and clicking on the Support button.
+
+Regards,
+Chi-lei (Lei-lei)
+Agoda Customer Experience Group`;
+
 export default function Drafts() {
   const [fromEmail, setFromEmail] = useState('BIZ.EN@AGODA.COM');
   const [toEmails, setToEmails] = useState<string[]>([]);
