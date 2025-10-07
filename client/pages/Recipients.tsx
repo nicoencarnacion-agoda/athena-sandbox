@@ -26,6 +26,7 @@ import MainNavigation from '../components/MainNavigation';
 import BookingIDs from '../components/BookingIDs';
 import RecipientsTable from '../components/RecipientsTable';
 import Templates from './Templates';
+import Drafts from './Drafts';
 
 export default function Recipients() {
   const [activeTab, setActiveTab] = useState(0);
@@ -264,13 +265,7 @@ function ContentArea({
 
       {activeTab === 1 && <Templates />}
 
-      {activeTab === 2 && (
-        <PlaceholderPanel
-          icon={<Mail sx={{ fontSize: 64, color: 'rgba(0, 0, 0, 0.23)' }} />}
-          title="Draft"
-          subtitle="Draft content will be added here"
-        />
-      )}
+      {activeTab === 2 && <Drafts />}
     </Box>
   );
 }
