@@ -31,7 +31,7 @@ const primaryNavItems: NavItem[] = [
   { icon: <ListIcon />, label: 'My Cases' },
 ];
 
-const secondaryNavItems = [
+const secondaryNavItems: NavItem[] = [
   { icon: <Help />, label: 'Help' },
   { icon: <Campaign />, label: 'Updates', badge: 1 },
   { icon: <Storage />, label: 'Bulk Action' },
@@ -39,7 +39,7 @@ const secondaryNavItems = [
   { icon: <Window />, label: 'Back Office' },
 ];
 
-const renderNavItem = (item: (typeof primaryNavItems)[number]) => (
+const renderNavItem = (item: NavItem) => (
   <Box
     key={item.label}
     sx={{
