@@ -11,6 +11,8 @@ import {
   IconButton,
   Divider,
   Link,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { Search, Close, Language } from '@mui/icons-material';
 import { templatesData, refundRelatedScenarios, TemplateCategory, Scenario } from '../data/templatesData';
@@ -21,6 +23,8 @@ export default function Templates() {
     templatesData[0].scenarios[0]
   );
   const [searchQuery, setSearchQuery] = useState('');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Filter scenarios based on search
   const filteredResults = useMemo(() => {
@@ -82,14 +86,16 @@ export default function Templates() {
   const currentCategory = templatesData.find((cat) => cat.id === selectedCategory);
 
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 42px)' }}>
+    <Box sx={{ display: 'flex', height: 'calc(100vh - 42px)', flexDirection: { xs: 'column', md: 'row' } }}>
       {/* Search and Categories Column */}
       <Box
         sx={{
-          width: 601,
-          borderRight: '1px solid #E0E0E0',
+          width: { xs: '100%', md: 601 },
+          borderRight: { xs: 'none', md: '1px solid #E0E0E0' },
+          borderBottom: { xs: '1px solid #E0E0E0', md: 'none' },
           display: 'flex',
           flexDirection: 'column',
+          maxHeight: { xs: '50vh', md: 'none' },
         }}
       >
         {/* Search Field */}
@@ -241,7 +247,16 @@ export default function Templates() {
 
       {/* Scenarios Column */}
       {!filteredResults && currentCategory && (
-        <Box sx={{ width: 341, borderRight: '1px solid #E0E0E0', display: 'flex', flexDirection: 'column' }}>
+        <Box
+          sx={{
+            width: { xs: '100%', md: 341 },
+            borderRight: { xs: 'none', md: '1px solid #E0E0E0' },
+            borderBottom: { xs: '1px solid #E0E0E0', md: 'none' },
+            display: { xs: isMobile ? 'none' : 'flex', md: 'flex' },
+            flexDirection: 'column',
+            maxHeight: { xs: '30vh', md: 'none' },
+          }}
+        >
           <Box sx={{ borderBottom: '1px solid #E0E0E0', p: '12px 16px' }}>
             <Typography
               sx={{
