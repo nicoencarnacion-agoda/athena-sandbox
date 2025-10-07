@@ -12,6 +12,7 @@ import {
   Layers,
   Window,
 } from '@mui/icons-material';
+import agodaLetter from '../assets/logos/agoda-letter.png';
 
 const navItems = [
   { icon: <Search />, label: 'Search', badge: 1 },
@@ -110,11 +111,15 @@ export default function MainNavigation() {
 
       <Box sx={{ p: 1.5, mb: 2 }}>
         <Box
+          component="img"
+          src={agodaLetter}
+          alt="Agoda letter logo"
           sx={{
             width: 32,
             height: 32,
-            bgcolor: '#E3F2FD',
             borderRadius: '4px',
+            objectFit: 'cover',
+            display: 'block',
           }}
         />
       </Box>
