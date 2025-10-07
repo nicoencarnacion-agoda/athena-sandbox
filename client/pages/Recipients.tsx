@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState } from "react";
 import {
   Box,
   Tabs,
@@ -13,7 +13,7 @@ import {
   useTheme,
   Drawer,
   IconButton,
-} from '@mui/material';
+} from "@mui/material";
 import {
   PermContactCalendar,
   Article,
@@ -21,22 +21,22 @@ import {
   Search,
   Info,
   Menu as MenuIcon,
-} from '@mui/icons-material';
-import MainNavigation from '../components/MainNavigation';
-import BookingIDs from '../components/BookingIDs';
-import RecipientsTable from '../components/RecipientsTable';
-import Templates from './Templates';
-import Drafts from './Drafts';
+} from "@mui/icons-material";
+import MainNavigation from "../components/MainNavigation";
+import BookingIDs from "../components/BookingIDs";
+import RecipientsTable from "../components/RecipientsTable";
+import Templates from "./Templates";
+import Drafts from "./Drafts";
 
 export default function Recipients() {
   const [activeTab, setActiveTab] = useState(0);
-  const [contactType, setContactType] = useState('Customer');
-  const [ucid, setUcid] = useState('7897129879879841');
+  const [contactType, setContactType] = useState("Customer");
+  const [ucid, setUcid] = useState("7897129879879841");
   const [ucidOpen, setUcidOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -53,19 +53,19 @@ export default function Recipients() {
   const filterControls = (
     <>
       <FormControl fullWidth variant="outlined">
-        <InputLabel sx={{ fontSize: '12px' }}>Contact type</InputLabel>
+        <InputLabel sx={{ fontSize: "12px" }}>Contact type</InputLabel>
         <Select
           value={contactType}
           onChange={handleContactTypeChange}
           label="Contact type"
           sx={{
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'rgba(0, 0, 0, 0.23)',
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 0, 0, 0.23)",
             },
-            '& .MuiSelect-select': {
-              fontSize: '16px',
-              lineHeight: '24px',
-              letterSpacing: '0.15px',
+            "& .MuiSelect-select": {
+              fontSize: "16px",
+              lineHeight: "24px",
+              letterSpacing: "0.15px",
             },
           }}
         >
@@ -78,8 +78,8 @@ export default function Recipients() {
       <FormControl fullWidth variant="outlined">
         <InputLabel
           sx={{
-            fontSize: '12px',
-            color: ucidOpen ? '#2196F3' : 'rgba(0, 0, 0, 0.60)',
+            fontSize: "12px",
+            color: ucidOpen ? "#2196F3" : "rgba(0, 0, 0, 0.60)",
           }}
         >
           UCID
@@ -90,20 +90,24 @@ export default function Recipients() {
           onOpen={() => setUcidOpen(true)}
           onClose={() => setUcidOpen(false)}
           label="UCID"
-          startAdornment={<Search sx={{ color: 'rgba(0, 0, 0, 0.54)', mr: 1 }} />}
+          startAdornment={
+            <Search sx={{ color: "rgba(0, 0, 0, 0.54)", mr: 1 }} />
+          }
           sx={{
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: ucidOpen ? '#2196F3' : 'rgba(0, 0, 0, 0.23)',
-              borderWidth: ucidOpen ? '2px' : '1px',
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: ucidOpen ? "#2196F3" : "rgba(0, 0, 0, 0.23)",
+              borderWidth: ucidOpen ? "2px" : "1px",
             },
-            '& .MuiSelect-select': {
-              fontSize: '16px',
-              lineHeight: '24px',
-              letterSpacing: '0.15px',
+            "& .MuiSelect-select": {
+              fontSize: "16px",
+              lineHeight: "24px",
+              letterSpacing: "0.15px",
             },
           }}
         >
-          <MenuItem value="7897129879879841">7897129879879841 (Default)</MenuItem>
+          <MenuItem value="7897129879879841">
+            7897129879879841 (Default)
+          </MenuItem>
           <MenuItem value="9879789712879841">9879789712879841</MenuItem>
           <MenuItem value="7987987897129841">7987987897129841</MenuItem>
         </Select>
@@ -112,7 +116,7 @@ export default function Recipients() {
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#FFF' }}>
+    <Box sx={{ display: "flex", height: "100vh", bgcolor: "#FFF" }}>
       <MainNavigation />
 
       {isMobile ? (
@@ -121,25 +125,25 @@ export default function Recipients() {
             anchor="left"
             open={drawerOpen}
             onClose={() => setDrawerOpen(false)}
-            sx={{ '& .MuiDrawer-paper': { width: '320px', mt: '64px' } }}
+            sx={{ "& .MuiDrawer-paper": { width: "320px", mt: "64px" } }}
           >
             <BookingIDs />
           </Drawer>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
             <Box
               sx={{
                 p: 2,
-                borderBottom: '1px solid #E0E0E0',
-                display: 'flex',
-                alignItems: 'center',
+                borderBottom: "1px solid #E0E0E0",
+                display: "flex",
+                alignItems: "center",
                 gap: 2,
-                bgcolor: '#FAFAFA',
+                bgcolor: "#FAFAFA",
               }}
             >
               <IconButton onClick={() => setDrawerOpen(true)}>
                 <MenuIcon />
               </IconButton>
-              <Box sx={{ fontSize: '20px', fontWeight: 500 }}>Recipients</Box>
+              <Box sx={{ fontSize: "20px", fontWeight: 500 }}>Recipients</Box>
             </Box>
             <ContentArea
               activeTab={activeTab}
@@ -169,12 +173,12 @@ function FiltersColumn({ children }: { children: ReactNode }) {
     <Box
       sx={{
         width: 404,
-        borderRight: '1px solid #E0E0E0',
-        p: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        justifyContent: 'flex-start',
+        borderRight: "1px solid #E0E0E0",
+        p: "24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "24px",
+        justifyContent: "flex-start",
       }}
     >
       {children}
@@ -194,69 +198,76 @@ function ContentArea({
   showFiltersInContent?: boolean;
 }) {
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ borderBottom: '1px solid #E0E0E0', bgcolor: '#FAFAFA' }}>
+    <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <Box sx={{ borderBottom: "1px solid #E0E0E0", bgcolor: "#FAFAFA" }}>
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            '& .MuiTab-root': {
-              fontSize: '14px',
+            "& .MuiTab-root": {
+              fontSize: "14px",
               fontWeight: 500,
-              lineHeight: '24px',
-              letterSpacing: '0.4px',
-              textTransform: 'none',
-              minHeight: '42px',
+              lineHeight: "24px",
+              letterSpacing: "0.4px",
+              textTransform: "none",
+              minHeight: "42px",
             },
           }}
         >
-          <Tab icon={<PermContactCalendar />} iconPosition="start" label="Recipients" />
+          <Tab
+            icon={<PermContactCalendar />}
+            iconPosition="start"
+            label="Recipients"
+          />
           <Tab icon={<Article />} iconPosition="start" label="Templates" />
           <Tab icon={<Mail />} iconPosition="start" label="Draft" />
         </Tabs>
       </Box>
 
       {activeTab === 0 && (
-        <Box sx={{ flex: 1, overflow: 'auto' }}>
+        <Box sx={{ flex: 1, overflow: "auto" }}>
           <Box
             sx={{
-              p: { xs: 2, md: '24px' },
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '24px',
+              p: { xs: 2, md: "24px" },
+              display: "flex",
+              flexDirection: "column",
+              gap: "24px",
             }}
           >
             {showFiltersInContent && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <Box
+                sx={{ display: "flex", flexDirection: "column", gap: "24px" }}
+              >
                 {filterControls}
               </Box>
             )}
 
             <Alert
-              icon={<Info sx={{ color: '#0288D1' }} />}
+              icon={<Info sx={{ color: "#0288D1" }} />}
               severity="info"
               sx={{
-                bgcolor: '#E5F6FD',
-                color: '#014361',
-                '& .MuiAlert-icon': {
-                  color: '#0288D1',
+                bgcolor: "#E5F6FD",
+                color: "#014361",
+                "& .MuiAlert-icon": {
+                  color: "#0288D1",
                 },
-                fontSize: '14px',
-                lineHeight: '20.02px',
-                letterSpacing: '0.17px',
+                fontSize: "14px",
+                lineHeight: "20.02px",
+                letterSpacing: "0.17px",
                 fontWeight: 400,
-                p: '6px 16px',
-                borderRadius: '4px',
+                p: "6px 16px",
+                borderRadius: "4px",
                 boxShadow:
-                  '0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)',
+                  "0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)",
               }}
             >
-              It's currently 06:37 in customer's local time (based on the primary phone of member)
+              It's currently 06:37 in customer's local time (based on the
+              primary phone of member)
             </Alert>
 
-            <Box sx={{ overflowX: 'auto' }}>
+            <Box sx={{ overflowX: "auto" }}>
               <RecipientsTable />
             </Box>
           </Box>
@@ -280,11 +291,29 @@ function PlaceholderPanel({
   subtitle: string;
 }) {
   return (
-    <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
-      <Box sx={{ textAlign: 'center' }}>
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 3,
+      }}
+    >
+      <Box sx={{ textAlign: "center" }}>
         <Box sx={{ mb: 2 }}>{icon}</Box>
-        <Box sx={{ fontSize: '20px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.87)' }}>{title}</Box>
-        <Box sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.60)', mt: 1 }}>{subtitle}</Box>
+        <Box
+          sx={{
+            fontSize: "20px",
+            fontWeight: 500,
+            color: "rgba(0, 0, 0, 0.87)",
+          }}
+        >
+          {title}
+        </Box>
+        <Box sx={{ fontSize: "14px", color: "rgba(0, 0, 0, 0.60)", mt: 1 }}>
+          {subtitle}
+        </Box>
       </Box>
     </Box>
   );
