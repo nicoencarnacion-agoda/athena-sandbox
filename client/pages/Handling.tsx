@@ -61,11 +61,12 @@ const initialBIDs: BIDTab[] = [
 
 export default function Handling() {
   const [bidTabs, setBidTabs] = useState<BIDTab[]>(initialBIDs);
-  const [bidRequests, setBidRequests] = useState<Record<string, RequestTab[]>>(() =>
-    initialBIDs.reduce<Record<string, RequestTab[]>>((acc, bid) => {
-      acc[bid.id] = bid.defaultRequests;
-      return acc;
-    }, {})
+  const [bidRequests, setBidRequests] = useState<Record<string, RequestTab[]>>(
+    () =>
+      initialBIDs.reduce<Record<string, RequestTab[]>>((acc, bid) => {
+        acc[bid.id] = bid.defaultRequests;
+        return acc;
+      }, {}),
   );
   const [activeBIDTab, setActiveBIDTab] = useState(0);
   const [activeRequestTab, setActiveRequestTab] = useState(0);
@@ -82,16 +83,24 @@ export default function Handling() {
 
   useEffect(() => {
     if (activeRequestTab >= activeRequests.length) {
-      setActiveRequestTab(activeRequests.length > 0 ? activeRequests.length - 1 : 0);
+      setActiveRequestTab(
+        activeRequests.length > 0 ? activeRequests.length - 1 : 0,
+      );
     }
   }, [activeRequestTab, activeRequests]);
 
-  const handleBIDTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+  const handleBIDTabChange = (
+    _event: React.SyntheticEvent,
+    newValue: number,
+  ) => {
     setActiveBIDTab(newValue);
     setActiveRequestTab(0);
   };
 
-  const handleRequestTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+  const handleRequestTabChange = (
+    _event: React.SyntheticEvent,
+    newValue: number,
+  ) => {
     if (!activeRequests.length) {
       return;
     }
@@ -133,7 +142,7 @@ export default function Handling() {
     const currentRequests = bidRequests[activeBid.id] ?? [];
     const updatedRequests = currentRequests.filter((_, i) => i !== index);
 
-    setBidRequests(prev => ({ ...prev, [activeBid.id]: updatedRequests }));
+    setBidRequests((prev) => ({ ...prev, [activeBid.id]: updatedRequests }));
 
     if (activeRequestTab >= updatedRequests.length) {
       setActiveRequestTab(Math.max(0, updatedRequests.length - 1));
