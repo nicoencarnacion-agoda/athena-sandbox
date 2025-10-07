@@ -25,6 +25,7 @@ import {
 import MainNavigation from '../components/MainNavigation';
 import BookingIDs from '../components/BookingIDs';
 import RecipientsTable from '../components/RecipientsTable';
+import Templates from './Templates';
 
 export default function Recipients() {
   const [activeTab, setActiveTab] = useState(0);
@@ -261,13 +262,7 @@ function ContentArea({
         </Box>
       )}
 
-      {activeTab === 1 && (
-        <PlaceholderPanel
-          icon={<Article sx={{ fontSize: 64, color: 'rgba(0, 0, 0, 0.23)' }} />}
-          title="Templates"
-          subtitle="Template content will be added here"
-        />
-      )}
+      {activeTab === 1 && <Templates />}
 
       {activeTab === 2 && (
         <PlaceholderPanel
