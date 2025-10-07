@@ -40,50 +40,57 @@ export default function Drafts() {
   const [toInputValue, setToInputValue] = useState('');
   const [subject, setSubject] = useState('Re: Booking 123456789');
   const [nickname, setNickname] = useState('Ben');
-  const [toFocused, setToFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const toFieldRef = useRef<HTMLDivElement | null>(null);
+
+  const labelStyles = {
+    fontSize: '12px',
+    lineHeight: '12px',
+    letterSpacing: '0.15px',
+    color: 'rgba(0, 0, 0, 0.60)',
+    '&.Mui-focused': {
+      color: '#2196F3',
+    },
+  };
+
+  const inputTypographyStyles = {
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '0.15px',
+  };
+
+  const inputRootBaseStyles = {
+    minHeight: '40px',
+    paddingLeft: 0,
+    paddingRight: 0,
+  };
 
   const handleFromChange = (event: SelectChangeEvent) => {
     setFromEmail(event.target.value);
   };
 
-  const handleToKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const addEmailChip = (rawValue: string) => {
+    const normalized = rawValue.trim();
+    if (!normalized) {
+      return;
+    }
+
+    setToEmails((prev) => (prev.includes(normalized) ? prev : [...prev, normalized]));
+  };
+
+  const handleToKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === ',' && toInputValue.trim()) {
       event.preventDefault();
-      const email = toInputValue.trim();
-      if (email && !toEmails.includes(email)) {
-        setToEmails([...toEmails, email]);
-        setToInputValue('');
-      }
+      addEmailChip(toInputValue);
+      setToInputValue('');
     }
   };
 
   const handleDeleteEmail = (emailToDelete: string) => {
-    setToEmails(toEmails.filter((email) => email !== emailToDelete));
+    setToEmails((prev) => prev.filter((email) => email !== emailToDelete));
+    inputRef.current?.focus();
   };
 
-  const handleInputFocus = () => {
-    setToFocused(true);
-  };
-
-  const handleInputBlur = (_event: FocusEvent<HTMLInputElement>) => {
-    window.setTimeout(() => {
-      const activeElement = document.activeElement;
-      if (!toFieldRef.current || !activeElement) {
-        setToFocused(false);
-        return;
-      }
-      if (!toFieldRef.current.contains(activeElement)) {
-        setToFocused(false);
-      }
-    }, 0);
-  };
-
-  const shouldShrinkLabel = toFocused || toEmails.length > 0 || toInputValue.trim().length > 0;
-  const borderBottomColor = toFocused ? '#2196F3' : 'rgba(0, 0, 0, 0.42)';
-  const borderBottomWidth = toFocused ? '2px' : '1px';
-  const paddingBottom = toFocused ? '5px' : '6px';
+  const shouldShrinkLabel = toEmails.length > 0 || Boolean(toInputValue.trim());
 
   return (
     <Box
