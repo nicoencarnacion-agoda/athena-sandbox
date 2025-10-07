@@ -39,6 +39,9 @@ export default function Drafts() {
   const [toInputValue, setToInputValue] = useState('');
   const [subject, setSubject] = useState('Re: Booking 123456789');
   const [nickname, setNickname] = useState('Ben');
+  const [toFocused, setToFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const toFieldRef = useRef<HTMLDivElement | null>(null);
 
   const handleFromChange = (event: SelectChangeEvent) => {
     setFromEmail(event.target.value);
@@ -58,6 +61,28 @@ export default function Drafts() {
   const handleDeleteEmail = (emailToDelete: string) => {
     setToEmails(toEmails.filter((email) => email !== emailToDelete));
   };
+
+  const handleInputFocus = () => {
+    setToFocused(true);
+  };
+
+  const handleInputBlur = (_event: FocusEvent<HTMLInputElement>) => {
+    window.setTimeout(() => {
+      const activeElement = document.activeElement;
+      if (!toFieldRef.current || !activeElement) {
+        setToFocused(false);
+        return;
+      }
+      if (!toFieldRef.current.contains(activeElement)) {
+        setToFocused(false);
+      }
+    }, 0);
+  };
+
+  const shouldShrinkLabel = toFocused || toEmails.length > 0 || toInputValue.trim().length > 0;
+  const borderBottomColor = toFocused ? '#2196F3' : 'rgba(0, 0, 0, 0.42)';
+  const borderBottomWidth = toFocused ? '2px' : '1px';
+  const paddingBottom = toFocused ? '5px' : '6px';
 
   return (
     <Box
