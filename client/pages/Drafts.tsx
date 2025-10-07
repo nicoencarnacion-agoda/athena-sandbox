@@ -170,24 +170,32 @@ export default function Drafts() {
 
           <FormControl fullWidth variant="standard">
             <InputLabel
+              shrink={shouldShrinkLabel}
+              onClick={() => inputRef.current?.focus()}
               sx={{
                 fontSize: '12px',
                 lineHeight: '12px',
                 letterSpacing: '0.15px',
-                color: 'rgba(0, 0, 0, 0.60)',
+                color: toFocused ? '#2196F3' : 'rgba(0, 0, 0, 0.60)',
+                cursor: 'text',
               }}
             >
               To
             </InputLabel>
             <Box
+              ref={toFieldRef}
+              onClick={() => inputRef.current?.focus()}
               sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: '8px',
-                mt: '18px',
-                pb: '6px',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+                mt: shouldShrinkLabel ? '18px' : 0,
+                pt: shouldShrinkLabel ? 0 : '6px',
+                pb: paddingBottom,
+                borderBottom: `${borderBottomWidth} solid ${borderBottomColor}`,
                 alignItems: 'center',
+                transition: 'border-color 0.2s ease, border-bottom-width 0.2s ease',
+                cursor: 'text',
               }}
             >
               {toEmails.map((email) => (
@@ -220,17 +228,19 @@ export default function Drafts() {
                 />
               ))}
               <input
+                ref={inputRef}
                 type="text"
                 value={toInputValue}
                 onChange={(e) => setToInputValue(e.target.value)}
                 onKeyDown={handleToKeyDown}
-                placeholder={toEmails.length === 0 ? '' : ''}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
                 style={{
                   border: 'none',
                   outline: 'none',
                   background: 'transparent',
                   flex: 1,
-                  minWidth: '50px',
+                  minWidth: '80px',
                   fontSize: '16px',
                   fontFamily: 'Roboto, -apple-system, Helvetica, sans-serif',
                   color: 'rgba(0, 0, 0, 0.87)',
