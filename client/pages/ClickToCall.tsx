@@ -34,62 +34,12 @@ interface ContactRow {
   phoneNumber: string;
 }
 
-const contactData: ContactRow[] = [
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-  {
-    role: "Member",
-    description: "Mohd Faez Nawi",
-    phoneType: "Primary phone",
-    phoneNumber: "63 277 1188",
-  },
-];
+const contactData: ContactRow[] = Array.from({ length: 9 }, () => ({
+  role: "Member",
+  description: "Mohd Faez Nawi",
+  phoneType: "Primary phone",
+  phoneNumber: "63 277 1188",
+}));
 
 export default function ClickToCall() {
   const [direction, setDirection] = useState("outbound");
@@ -454,12 +404,13 @@ export default function ClickToCall() {
             <TableContainer
               component={Paper}
               sx={{
+                width: "100%",
                 border: "1px solid #E0E0E0",
                 boxShadow: "none",
                 borderRadius: "4px",
               }}
             >
-              <Table>
+              <Table sx={{ width: "100%" }}>
                 <TableHead>
                   <TableRow sx={{ bgcolor: "#ECEFF1" }}>
                     <TableCell
@@ -518,6 +469,7 @@ export default function ClickToCall() {
                         letterSpacing: "0.4px",
                         color: "rgba(0, 0, 0, 0.87)",
                         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                        textAlign: "center",
                       }}
                     >
                       Action
@@ -526,85 +478,74 @@ export default function ClickToCall() {
                 </TableHead>
                 <TableBody>
                   {contactData.map((row, index) => (
-                    <TableRow key={index}>
+                    <TableRow key={`${row.phoneNumber}-${index}`}>
                       <TableCell
                         sx={{
                           fontSize: "14px",
                           lineHeight: "143%",
                           letterSpacing: "0.17px",
                           color: "rgba(0, 0, 0, 0.87)",
-                          borderBottom:
-                            index === 0
-                              ? "1px solid rgba(0, 0, 0, 0.12)"
-                              : "none",
-                          borderRight: "1px solid #E0E0E0",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
                         }}
-                        rowSpan={index === 0 ? 2 : 1}
                       >
-                        {index === 0 && row.role}
+                        {row.role}
                       </TableCell>
-                      {index !== 1 && (
-                        <>
-                          <TableCell
-                            sx={{
-                              fontSize: "14px",
-                              lineHeight: "143%",
-                              letterSpacing: "0.17px",
-                              color: "rgba(0, 0, 0, 0.87)",
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-                            }}
-                          >
-                            {row.description}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "14px",
-                              lineHeight: "143%",
-                              letterSpacing: "0.17px",
-                              color: "rgba(0, 0, 0, 0.87)",
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-                            }}
-                          >
-                            {row.phoneType}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "14px",
-                              lineHeight: "143%",
-                              letterSpacing: "0.17px",
-                              color: "rgba(0, 0, 0, 0.87)",
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-                            }}
-                          >
-                            {row.phoneNumber}
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              fontSize: "14px",
-                              lineHeight: "143%",
-                              letterSpacing: "0.17px",
-                              color: "rgba(0, 0, 0, 0.87)",
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-                            }}
-                          >
-                            <Button
-                              variant="outlined"
-                              startIcon={<PhoneIcon />}
-                              sx={{
-                                fontSize: "16px",
-                                fontWeight: 500,
-                                lineHeight: "26px",
-                                letterSpacing: "0.46px",
-                                textTransform: "none",
-                                borderColor: "rgba(25, 118, 210, 0.5)",
-                                color: "#2196F3",
-                              }}
-                            >
-                              Call
-                            </Button>
-                          </TableCell>
-                        </>
-                      )}
+                      <TableCell
+                        sx={{
+                          fontSize: "14px",
+                          lineHeight: "143%",
+                          letterSpacing: "0.17px",
+                          color: "rgba(0, 0, 0, 0.87)",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                        }}
+                      >
+                        {row.description}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          fontSize: "14px",
+                          lineHeight: "143%",
+                          letterSpacing: "0.17px",
+                          color: "rgba(0, 0, 0, 0.87)",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                        }}
+                      >
+                        {row.phoneType}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          fontSize: "14px",
+                          lineHeight: "143%",
+                          letterSpacing: "0.17px",
+                          color: "rgba(0, 0, 0, 0.87)",
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                        }}
+                      >
+                        {row.phoneNumber}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                          textAlign: "center",
+                        }}
+                      >
+                        <Button
+                          variant="outlined"
+                          startIcon={<PhoneIcon />}
+                          sx={{
+                            fontSize: "16px",
+                            fontWeight: 500,
+                            lineHeight: "26px",
+                            letterSpacing: "0.46px",
+                            textTransform: "none",
+                            borderColor: "rgba(25, 118, 210, 0.5)",
+                            color: "#2196F3",
+                            px: "22px",
+                          }}
+                        >
+                          Call
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
