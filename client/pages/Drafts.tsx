@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent, useRef, FocusEvent } from 'react';
+import { useState, KeyboardEvent, useRef } from 'react';
 import {
   Box,
   FormControl,
