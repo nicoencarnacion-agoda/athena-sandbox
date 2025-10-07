@@ -14,19 +14,71 @@ import {
 } from '@mui/icons-material';
 import agodaLetter from '../assets/logos/agoda-letter.png';
 
-const navItems = [
+const primaryNavItems = [
   { icon: <Search />, label: 'Search', badge: 1 },
   { icon: <EditNote />, label: 'Handling' },
   { icon: <Phone />, label: 'Phone' },
   { icon: <Email />, label: 'Email', active: true },
   { icon: <Message />, label: 'Message' },
   { icon: <ListIcon />, label: 'My Cases' },
+];
+
+const secondaryNavItems = [
   { icon: <Help />, label: 'Help' },
   { icon: <Campaign />, label: 'Updates', badge: 1 },
   { icon: <Storage />, label: 'Bulk Action' },
   { icon: <Layers />, label: 'Work\nspace' },
   { icon: <Window />, label: 'Back Office' },
 ];
+
+const renderNavItem = (item: (typeof primaryNavItems)[number]) => (
+  <Box
+    key={item.label}
+    sx={{
+      p: '8px',
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 0,
+      bgcolor: item.active ? '#37474F' : 'transparent',
+      '&:hover': {
+        bgcolor: item.active ? '#37474F' : 'rgba(255,255,255,0.05)',
+      },
+      cursor: 'pointer',
+    }}
+  >
+    <Box sx={{ color: '#E3F2FD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {item.icon}
+    </Box>
+    <Typography
+      sx={{
+        color: 'rgba(0, 0, 0, 0.87)',
+        fontSize: '12px',
+        textAlign: 'center',
+        lineHeight: '19.92px',
+        letterSpacing: '0.4px',
+        whiteSpace: 'pre-line',
+        fontWeight: 400,
+        mt: 0,
+      }}
+    >
+      <span style={{ color: '#fff' }}>{item.label}</span>
+    </Typography>
+    {item.badge && (
+      <Badge
+        badgeContent={item.badge}
+        color="warning"
+        sx={{
+          position: 'absolute',
+          top: 8,
+          right: 14,
+        }}
+      />
+    )}
+  </Box>
+);
 
 export default function MainNavigation() {
   return (
