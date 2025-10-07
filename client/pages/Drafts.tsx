@@ -437,7 +437,7 @@ export default function Drafts() {
                   src={agodaLogo}
                   alt="Agoda logo"
                   sx={{
-                    width: '120px',
+                    width: '80px',
                     height: 'auto',
                     mb: '40px',
                   }}
