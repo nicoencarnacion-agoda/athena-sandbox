@@ -115,11 +115,15 @@ export default function Handling() {
       return;
     }
 
-    if (activeBIDTab >= updatedBids.length) {
-      const nextIndex = Math.max(0, updatedBids.length - 1);
-      setActiveBIDTab(nextIndex);
-      setActiveRequestTab(0);
+    let nextIndex = activeBIDTab;
+    if (index < activeBIDTab) {
+      nextIndex = Math.max(0, activeBIDTab - 1);
+    } else if (activeBIDTab >= updatedBids.length) {
+      nextIndex = Math.max(0, updatedBids.length - 1);
     }
+
+    setActiveBIDTab(nextIndex);
+    setActiveRequestTab(0);
   };
 
   const handleCloseRequest = (index: number, event: React.MouseEvent) => {
@@ -224,7 +228,7 @@ export default function Handling() {
           }}
         >
           <Tabs
-            value={activeRequestTab}
+            value={activeRequests.length > 0 ? activeRequestTab : false}
             onChange={handleRequestTabChange}
             sx={{
               "& .MuiTabs-indicator": {
