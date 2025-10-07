@@ -219,12 +219,15 @@ export default function Drafts() {
             value={toInputValue}
             onChange={(e) => setToInputValue(e.target.value)}
             onKeyDown={handleToKeyDown}
+            onFocus={handleToFocus}
+            onBlur={handleToBlur}
             inputRef={inputRef}
             InputLabelProps={{
               shrink: shouldShrinkLabel,
               sx: labelStyles,
             }}
             InputProps={{
+              disableUnderline: true,
               onClick: () => inputRef.current?.focus(),
               startAdornment:
                 toEmails.length > 0 ? (
@@ -277,7 +280,7 @@ export default function Drafts() {
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 gap: toEmails.length > 0 ? '8px' : 0,
-                '& .MuiInput-input': {
+                '& .MuiInputBase-input': {
                   ...inputTypographyStyles,
                   flex: 1,
                   minWidth: '120px',
