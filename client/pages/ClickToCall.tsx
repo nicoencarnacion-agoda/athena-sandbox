@@ -51,7 +51,7 @@ export default function ClickToCall() {
 
   return (
     <Layout>
-      <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <Box sx={{ display: "flex", height: "100vh", overflow: "hidden", width: "100%" }}>
         <BookingIDs />
 
         <Box
@@ -356,6 +356,7 @@ export default function ClickToCall() {
             display: "flex",
             flexDirection: "column",
             height: "100vh",
+            width: "100%",
           }}
         >
           <Box
@@ -366,6 +367,7 @@ export default function ClickToCall() {
               flexDirection: "column",
               gap: "12px",
               overflow: "auto",
+              width: "100%",
             }}
           >
             <Alert
