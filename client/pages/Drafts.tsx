@@ -265,19 +265,15 @@ export default function Drafts() {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             InputLabelProps={{
-              sx: {
-                fontSize: '12px',
-                lineHeight: '12px',
-                letterSpacing: '0.15px',
-                color: 'rgba(0, 0, 0, 0.60)',
-              },
+              sx: labelStyles,
             }}
             InputProps={{
               sx: {
-                fontSize: '16px',
-                lineHeight: '24px',
-                letterSpacing: '0.15px',
-                mt: '18px',
+                ...inputRootBaseStyles,
+                '& .MuiInput-input': {
+                  ...inputTypographyStyles,
+                  padding: 0,
+                },
               },
             }}
           />
