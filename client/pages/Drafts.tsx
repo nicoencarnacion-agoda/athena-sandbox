@@ -62,6 +62,8 @@ export default function Drafts() {
   const [toInputValue, setToInputValue] = useState('');
   const [subject, setSubject] = useState('Re: Booking 123456789');
   const [nickname, setNickname] = useState('Ben');
+  const [emailBody, setEmailBody] = useState(DEFAULT_EMAIL_BODY);
+  const [toFocused, setToFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const labelStyles = {
@@ -100,7 +102,7 @@ export default function Drafts() {
   };
 
   const handleToKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === ',' && toInputValue.trim()) {
+    if ((event.key === ',' || event.key === 'Enter') && toInputValue.trim()) {
       event.preventDefault();
       addEmailChip(toInputValue);
       setToInputValue('');
@@ -112,7 +114,19 @@ export default function Drafts() {
     inputRef.current?.focus();
   };
 
-  const shouldShrinkLabel = toEmails.length > 0 || Boolean(toInputValue.trim());
+  const handleToFocus = () => {
+    setToFocused(true);
+  };
+
+  const handleToBlur = () => {
+    if (toInputValue.trim()) {
+      addEmailChip(toInputValue);
+      setToInputValue('');
+    }
+    setToFocused(false);
+  };
+
+  const shouldShrinkLabel = toFocused || toEmails.length > 0 || Boolean(toInputValue.trim());
 
   return (
     <Box
