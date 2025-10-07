@@ -13,6 +13,7 @@ import {
   useTheme,
   Drawer,
   IconButton,
+  TextField,
 } from "@mui/material";
 import {
   PermContactCalendar,
@@ -50,69 +51,42 @@ export default function Recipients() {
     setUcid(event.target.value);
   };
 
-  const filterControls = (
-    <>
-      <FormControl fullWidth variant="outlined">
-        <InputLabel sx={{ fontSize: "12px" }}>Contact type</InputLabel>
-        <Select
+    const filterControls = (
+      <>
+        <TextField
+          select
+          fullWidth
+          variant="outlined"
+          label="Contact type"
           value={contactType}
           onChange={handleContactTypeChange}
-          label="Contact type"
-          sx={{
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(0, 0, 0, 0.23)",
-            },
-            "& .MuiSelect-select": {
-              fontSize: "16px",
-              lineHeight: "24px",
-              letterSpacing: "0.15px",
-            },
-          }}
         >
           <MenuItem value="Customer">Customer</MenuItem>
           <MenuItem value="Partner">Partner</MenuItem>
           <MenuItem value="Agent">Agent</MenuItem>
-        </Select>
-      </FormControl>
+        </TextField>
 
-      <FormControl fullWidth variant="outlined">
-        <InputLabel
-          sx={{
-            fontSize: "12px",
-            color: ucidOpen ? "#2196F3" : "rgba(0, 0, 0, 0.60)",
-          }}
-        >
-          UCID
-        </InputLabel>
-        <Select
+        <TextField
+          select
+          fullWidth
+          variant="outlined"
+          label="UCID"
           value={ucid}
           onChange={handleUcidChange}
-          onOpen={() => setUcidOpen(true)}
-          onClose={() => setUcidOpen(false)}
-          label="UCID"
-          startAdornment={
-            <Search sx={{ color: "rgba(0, 0, 0, 0.54)", mr: 1 }} />
-          }
-          sx={{
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: ucidOpen ? "#2196F3" : "rgba(0, 0, 0, 0.23)",
-              borderWidth: ucidOpen ? "2px" : "1px",
-            },
-            "& .MuiSelect-select": {
-              fontSize: "16px",
-              lineHeight: "24px",
-              letterSpacing: "0.15px",
-            },
+          onFocus={() => setUcidOpen(true)}
+          onBlur={() => setUcidOpen(false)}
+          InputProps={{
+            startAdornment: (
+              <Search sx={{ color: "rgba(0, 0, 0, 0.54)", mr: 1 }} />
+            ),
           }}
         >
-          <MenuItem value="7897129879879841">
-            7897129879879841 (Default)
-          </MenuItem>
+          <MenuItem value="7897129879879841">7897129879879841 (Default)</MenuItem>
           <MenuItem value="9879789712879841">9879789712879841</MenuItem>
           <MenuItem value="7987987897129841">7987987897129841</MenuItem>
-        </Select>
-      </FormControl>
-    </>
+        </TextField>
+
+      </>
   );
 
   return (
