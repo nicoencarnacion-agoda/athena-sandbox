@@ -373,6 +373,10 @@ export default function Handling() {
                 px: "22px",
                 py: "8px",
                 bgcolor: "#2196F3",
+                color: "#FFFFFF",
+                alignSelf: "stretch",
+                display: "flex",
+                alignItems: "center",
                 "&:hover": {
                   bgcolor: "#1976D2",
                 },
