@@ -227,7 +227,6 @@ export default function Drafts() {
               sx: labelStyles,
             }}
             InputProps={{
-              disableUnderline: true,
               onClick: () => inputRef.current?.focus(),
               startAdornment:
                 toEmails.length > 0 ? (
