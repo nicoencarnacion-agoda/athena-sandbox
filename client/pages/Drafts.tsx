@@ -411,6 +411,8 @@ export default function Drafts() {
                 p: '40px 242px 0 242px',
                 flex: 1,
                 overflow: 'auto',
+                display: 'flex',
+                justifyContent: 'center',
                 '@media (max-width: 1400px)': {
                   px: '80px',
                 },
@@ -419,7 +421,17 @@ export default function Drafts() {
                 },
               }}
             >
-              <Box sx={{ maxWidth: '720px', mx: 'auto', pb: 3 }}>
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '720px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  minHeight: 0,
+                  pb: 3,
+                }}
+              >
                 <Box
                   sx={{
                     width: '78.519px',
@@ -460,50 +472,37 @@ export default function Drafts() {
                   </svg>
                 </Box>
 
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <Typography
-                    sx={{
+                <TextField
+                  variant="standard"
+                  multiline
+                  fullWidth
+                  value={emailBody}
+                  onChange={(e) => setEmailBody(e.target.value)}
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                  sx={{
+                    mt: '24px',
+                    flex: 1,
+                    '& .MuiInputBase-root': {
+                      height: '100%',
+                      alignItems: 'stretch',
+                      px: 0,
+                    },
+                    '& .MuiInputBase-inputMultiline': {
+                      padding: 0,
                       fontSize: '16px',
-                      fontWeight: 600,
                       lineHeight: '150%',
                       letterSpacing: '0.15px',
                       color: 'rgba(0, 0, 0, 0.87)',
-                    }}
-                  >
-                    Dear Yuiko Majima,
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      fontSize: '16px',
-                      fontWeight: 400,
-                      lineHeight: '150%',
-                      letterSpacing: '0.15px',
-                      color: 'rgba(0, 0, 0, 0.87)',
-                      whiteSpace: 'pre-line',
-                    }}
-                  >
-                    {`Greetings from Agoda!
-
-With reference booking ID 568308069 as detailed below:
-
-Hotel: Best Western Plus At 20 Sukhumvit
-Room Type: Superior Twin With Breakfast
-City/Country: Bangkok/Thailand
-Arrival: January 9, 2015
-Departure: January 10, 2015
-
-We have received a request from the customer to cancel their booking due to the current novel coronavirus outbreak.
-
-Please note that in accordance with our policy regarding special circumstances, we have cancelled this booking without penalties and have provided a full refund to the customer.
-
-In case you have any concerns, please contact our Accommodation Services Team. You can send an email by logging in to YCS (https://ycs.agoda.com/en-us) and clicking on the Support button.
-
-Regards, 
-Chi-lei (Lei-lei)
-Agoda Customer Experience Group`}
-                  </Typography>
-                </Box>
+                      fontFamily: 'Roboto, -apple-system, Helvetica, sans-serif',
+                      whiteSpace: 'pre-wrap',
+                      overflowY: 'auto',
+                      minHeight: '360px',
+                      resize: 'none',
+                    },
+                  }}
+                />
               </Box>
             </Box>
           </Box>
