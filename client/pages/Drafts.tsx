@@ -152,34 +152,16 @@ export default function Drafts() {
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <FormControl fullWidth variant="standard">
-            <InputLabel
-              sx={{
-                fontSize: "12px",
-                lineHeight: "12px",
-                letterSpacing: "0.15px",
-                color: "rgba(0, 0, 0, 0.60)",
-              }}
-            >
-              From
-            </InputLabel>
-            <Select
-              value={fromEmail}
-              onChange={handleFromChange}
-              IconComponent={ArrowDropDown}
-              sx={{
-                mt: "18px",
-                "& .MuiSelect-select": {
-                  display: "flex",
-                  alignItems: "center",
-                  minHeight: "24px",
-                  pb: "6px",
-                },
-                "&:before": {
-                  borderBottomColor: "rgba(0, 0, 0, 0.42)",
-                },
-              }}
-              renderValue={(value) => (
+          <TextField
+            select
+            fullWidth
+            variant="standard"
+            label="From"
+            value={fromEmail}
+            onChange={handleFromChange}
+            SelectProps={{
+              IconComponent: ArrowDropDown,
+              renderValue: (value) => (
                 <Chip
                   label={value}
                   size="small"
@@ -196,25 +178,25 @@ export default function Drafts() {
                     },
                   }}
                 />
-              )}
-            >
-              {emailOptions.map((email) => (
-                <MenuItem
-                  key={email}
-                  value={email}
-                  sx={{
-                    fontSize: "14px",
-                    lineHeight: "24px",
-                    letterSpacing: "0.17px",
-                    py: "4px",
-                    px: "16px",
-                  }}
-                >
-                  {email}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              ),
+            }}
+          >
+            {emailOptions.map((email) => (
+              <MenuItem
+                key={email}
+                value={email}
+                sx={{
+                  fontSize: "14px",
+                  lineHeight: "24px",
+                  letterSpacing: "0.17px",
+                  py: "4px",
+                  px: "16px",
+                }}
+              >
+                {email}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <TextField
             label="To"
@@ -226,77 +208,26 @@ export default function Drafts() {
             onFocus={handleToFocus}
             onBlur={handleToBlur}
             inputRef={inputRef}
-            InputLabelProps={{
-              shrink: shouldShrinkLabel,
-              sx: labelStyles,
-            }}
             InputProps={{
               onClick: () => inputRef.current?.focus(),
-              startAdornment:
-                toEmails.length > 0 ? (
-                  <InputAdornment
-                    position="start"
-                    disablePointerEvents={false}
-                    sx={{
-                      m: 0,
-                      pl: 0,
-                      pr: 0,
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: "8px",
-                    }}
-                  >
-                    {toEmails.map((email) => (
-                      <Chip
-                        key={email}
-                        label={email}
-                        size="small"
-                        onDelete={() => handleDeleteEmail(email)}
-                        deleteIcon={
-                          <Cancel
-                            sx={{
-                              fontSize: "16px",
-                              opacity: 0.26,
-                              "&:hover": { opacity: 0.4 },
-                            }}
-                          />
-                        }
-                        sx={{
-                          height: "24px",
-                          fontSize: "14px",
-                          fontWeight: 400,
-                          lineHeight: "18px",
-                          letterSpacing: "0.16px",
-                          bgcolor: "rgba(0, 0, 0, 0.08)",
-                          borderRadius: "100px",
-                          "& .MuiChip-label": {
-                            px: "10px",
-                          },
-                        }}
-                      />
-                    ))}
-                  </InputAdornment>
-                ) : null,
-              sx: {
-                ...inputRootBaseStyles,
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: toEmails.length > 0 ? "8px" : 0,
-                "& .MuiInputBase-input": {
-                  ...inputTypographyStyles,
-                  flex: 1,
-                  minWidth: "120px",
-                  padding: 0,
-                },
-                "& .MuiInputAdornment-root": {
-                  m: 0,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: "8px",
-                  maxWidth: "100%",
-                },
-              },
+              startAdornment: toEmails.length > 0 ? (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {toEmails.map((email) => (
+                    <Chip
+                      key={email}
+                      label={email}
+                      size="small"
+                      onDelete={() => handleDeleteEmail(email)}
+                      sx={{
+                        height: "24px",
+                        fontSize: "14px",
+                        bgcolor: "rgba(0, 0, 0, 0.08)",
+                        borderRadius: "100px",
+                      }}
+                    />
+                  ))}
+                </Box>
+              ) : null
             }}
           />
 
@@ -306,18 +237,6 @@ export default function Drafts() {
             fullWidth
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            InputLabelProps={{
-              sx: labelStyles,
-            }}
-            InputProps={{
-              sx: {
-                ...inputRootBaseStyles,
-                "& .MuiInputBase-input": {
-                  ...inputTypographyStyles,
-                  padding: 0,
-                },
-              },
-            }}
           />
         </Box>
 
@@ -544,18 +463,9 @@ export default function Drafts() {
             size="small"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
+            placeholder="Optional nickname"
             sx={{
-              width: "240px",
-              "& .MuiInputLabel-root": {
-                fontSize: "12px",
-                lineHeight: "12px",
-                letterSpacing: "0.15px",
-              },
-              "& .MuiOutlinedInput-input": {
-                fontSize: "16px",
-                lineHeight: "24px",
-                letterSpacing: "0.15px",
-              },
+              width: "240px"
             }}
           />
         </Box>
