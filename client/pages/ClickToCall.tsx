@@ -361,15 +361,21 @@ export default function ClickToCall() {
           >
             <Alert
               icon={<InfoIcon sx={{ color: "#0288D1" }} />}
+              severity="info"
               sx={{
                 bgcolor: "#E5F6FD",
                 color: "#014361",
-                fontSize: "14px",
-                lineHeight: "143%",
-                letterSpacing: "0.17px",
-                "& .MuiAlert-message": {
-                  color: "#014361",
+                "& .MuiAlert-icon": {
+                  color: "#0288D1",
                 },
+                fontSize: "14px",
+                lineHeight: "20.02px",
+                letterSpacing: "0.17px",
+                fontWeight: 400,
+                p: "6px 16px",
+                borderRadius: "4px",
+                boxShadow:
+                  "0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)",
               }}
             >
               It's currently 06:37 in customer's local time (based on the
