@@ -85,6 +85,7 @@ export default function Handling() {
   const [selectedRequest, setSelectedRequest] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [isWizardVisible, setIsWizardVisible] = useState(false);
   const searchFieldRef = useRef<HTMLInputElement>(null);
 
   const activeBid = bidTabs[activeBIDTab];
@@ -465,18 +466,110 @@ export default function Handling() {
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "flex-start",
-            p: "24px",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 1,
-              maxWidth: "700px",
-              width: "100%",
-            }}
-          >
+          {isWizardVisible ? (
+            <>
+              {/* Wizard and Note for BID */}
+              <Box
+                sx={{
+                  display: "flex",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                {/* Wizard */}
+                <Box
+                  sx={{
+                    flex: 1,
+                    height: "100%",
+                    bgcolor: "#fafafa",
+                    overflow: "hidden",
+                    p: "16px",
+                  }}
+                >
+                  <iframe
+                    src="https://ad553b829ae04b03ae5957f8d4c803b7-echo-studio.projects.builder.my/"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      border: "none",
+                      borderRadius: "4px",
+                      border: "1px solid #E0E0E0",
+                    }}
+                    title="Case Handling Wizard"
+                  />
+                </Box>
+
+                {/* Note for BID */}
+                <Box
+                  sx={{
+                    width: "310px",
+                    height: "100%",
+                    bgcolor: "#fff",
+                    borderLeft: "1px solid #E0E0E0",
+                    p: 3,
+                  }}
+                >
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Note for BID {activeBid?.label.split(": ")[1]}
+                  </Typography>
+
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    Request 1:
+                  </Typography>
+
+                  <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                    Case summary
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    Lorem ipsum placeholder
+                  </Typography>
+
+                  <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                    Action taken
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    Lorem ipsum placeholder
+                  </Typography>
+                  <Box sx={{ pl: 2, mb: 3 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      1. Action item
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      2. Action item
+                    </Typography>
+                  </Box>
+
+                  <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                    Special notes (Optional)
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    Lorem ipsum placeholder
+                  </Typography>
+                  <Box sx={{ pl: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      1. Action item
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      2. Action item
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </>
+          ) : (
+            /* Default View */
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 1,
+                maxWidth: "700px",
+                width: "100%",
+                padding: "24px",
+              }}
+            >
             <FormControl fullWidth>
                <InputLabel 
                  id="search-request-label" 
@@ -646,27 +739,36 @@ export default function Handling() {
                   ))}
               </Popover>
             </FormControl>
-            <Button
-              variant="contained"
-              sx={{
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "26px",
-                letterSpacing: "0.46px",
-                textTransform: "none",
-                px: "22px",
-                py: "8px",
-                bgcolor: "#2196F3",
-                color: "#FFFFFF",
-                mt: "7px",
-                "&:hover": {
-                  bgcolor: "#1976D2",
-                },
-              }}
-            >
-              Go
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  if (selectedRequest) {
+                    setIsWizardVisible(true);
+                    setIsPopoverOpen(false);
+                    setAnchorEl(null);
+                  }
+                }}
+                disabled={!selectedRequest}
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "26px",
+                  letterSpacing: "0.46px",
+                  textTransform: "none",
+                  px: "22px",
+                  py: "8px",
+                  bgcolor: "#2196F3",
+                  color: "#FFFFFF",
+                  mt: "7px",
+                  "&:hover": {
+                    bgcolor: "#1976D2",
+                  },
+                }}
+              >
+                Go
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </Layout>
