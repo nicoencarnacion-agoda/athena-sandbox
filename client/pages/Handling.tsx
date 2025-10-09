@@ -113,8 +113,9 @@ export default function Handling() {
     setAnchorEl(null);
     setExpandedCategory(null); // Reset expanded category
     // Blur the input field to remove focus
-    if (searchFieldRef.current) {
-      searchFieldRef.current.blur();
+    const field = searchFieldRef.current;
+    if (field && typeof (field as unknown as HTMLElement).blur === "function") {
+      (field as unknown as HTMLElement).blur();
     }
   };
 
