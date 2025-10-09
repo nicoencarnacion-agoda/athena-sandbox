@@ -86,7 +86,7 @@ export default function Handling() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [isWizardVisible, setIsWizardVisible] = useState(false);
-  const searchFieldRef = useRef<HTMLInputElement>(null);
+  const searchFieldRef = useRef<HTMLElement | null>(null);
 
   const activeBid = bidTabs[activeBIDTab];
 
