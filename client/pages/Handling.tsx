@@ -170,9 +170,7 @@ export default function Handling() {
     },
     {
       category: "Best price guarantee",
-      options: [
-        "Claim BPG",
-      ],
+      options: ["Claim BPG"],
     },
     {
       category: "Booking info",
@@ -193,9 +191,7 @@ export default function Handling() {
     },
     {
       category: "Cashback",
-      options: [
-        "Inquiry about Cashback",
-      ],
+      options: ["Inquiry about Cashback"],
     },
     {
       category: "Check-in inquiry/issue",
@@ -527,14 +523,22 @@ export default function Handling() {
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Case summary
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 3 }}
+                  >
                     Lorem ipsum placeholder
                   </Typography>
 
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Action taken
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 1 }}
+                  >
                     Lorem ipsum placeholder
                   </Typography>
                   <Box sx={{ pl: 2, mb: 3 }}>
@@ -549,7 +553,11 @@ export default function Handling() {
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Special notes (Optional)
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 1 }}
+                  >
                     Lorem ipsum placeholder
                   </Typography>
                   <Box sx={{ pl: 2 }}>
@@ -575,175 +583,193 @@ export default function Handling() {
                 padding: "24px",
               }}
             >
-            <FormControl fullWidth>
-               <InputLabel 
-                 id="search-request-label" 
-                 sx={{ 
-                   "&.MuiInputLabel-shrink": { 
-                     color: "rgba(0, 0, 0, 0.6)",
-                   },
-                   "&.Mui-focused": {
-                     color: "#1976d2 !important", // Primary blue color when focused
-                   }
-                 }}
-               >
-                 Search for a request
-               </InputLabel>
-               <Select
-                 labelId="search-request-label"
-                 value={selectedRequest}
-                 displayEmpty
-                 label="Search for a request"
-                 onClick={handleSearchFocus}
-                 open={false}
-                 inputRef={searchFieldRef}
-                 startAdornment={
-                   <InputAdornment position="start">
-                     <SearchIcon sx={{ color: "rgba(0, 0, 0, 0.54)" }} />
-                   </InputAdornment>
-                 }
-                 sx={{
-                   "& .MuiSelect-select": {
-                     fontSize: "16px",
-                     lineHeight: "24px",
-                     letterSpacing: "0.15px",
-                     paddingLeft: "32px !important",
-                     cursor: "pointer",
-                   },
-                   "& .MuiInputAdornment-root": {
-                     position: "absolute",
-                     left: "12px",
-                     pointerEvents: "none",
-                   },
-                   "& .MuiOutlinedInput-notchedOutline": {
-                     borderColor: "rgba(0, 0, 0, 0.23)",
-                   },
-                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                     borderColor: "rgba(0, 0, 0, 0.87)",
-                   },
-                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                     borderColor: "#1976d2",
-                   },
-                 }}
-                 renderValue={(selected) => {
-                   if (!selected) {
-                     return "Search for a request";
-                   }
-                   return selected;
-                 }}
-              />
-              <FormHelperText sx={{
-                fontSize: "12px",
-                lineHeight: "166%",
-                letterSpacing: "0.4px",
-                color: "rgba(0, 0, 0, 0.60)",
-              }}>
-                Use Ctrl+K to quickly access commands and actions.
-              </FormHelperText>
-               <Popover
-                 open={isPopoverOpen}
-                 anchorEl={anchorEl}
-                 onClose={handlePopoverClose}
-                 anchorOrigin={{
-                   vertical: 'bottom',
-                   horizontal: 'left',
-                 }}
-                 transformOrigin={{
-                   vertical: 'top',
-                   horizontal: 'left',
-                 }}
-                 TransitionComponent={Fade}
-                 transitionDuration={200}
-                 sx={{
-                   '& .MuiPopover-paper': {
-                     width: `620px`,
-                     maxHeight: 400,
-                     marginTop: '1px',
-                     boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
-                     transform: 'none !important',
-                   },
-                 }}
-              >
-                {/* Top Case Reasons - Always visible */}
-                <Box sx={{ bgcolor: "#F5F5F5", p: 2, borderBottom: "1px solid #E0E0E0" }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 0.87)" }}>
-                    Top Case Reasons
-                  </Typography>
-                </Box>
-                {requestOptions
-                  .find(cat => cat.category === "Top Case Reasons")
-                  ?.options.map((option) => (
-                    <MenuItem
-                      key={option}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent event bubbling
-                        handleRequestSelect(option);
-                      }}
-                      sx={{
-                        py: 1.5,
-                        pl: 3,
-                        fontSize: "14px",
-                        color: "rgba(0, 0, 0, 0.87)",
-                        "&:hover": { bgcolor: "#F5F5F5" },
-                      }}
+              <FormControl fullWidth>
+                <InputLabel
+                  id="search-request-label"
+                  sx={{
+                    "&.MuiInputLabel-shrink": {
+                      color: "rgba(0, 0, 0, 0.6)",
+                    },
+                    "&.Mui-focused": {
+                      color: "#1976d2 !important", // Primary blue color when focused
+                    },
+                  }}
+                >
+                  Search for a request
+                </InputLabel>
+                <Select
+                  labelId="search-request-label"
+                  value={selectedRequest}
+                  displayEmpty
+                  label="Search for a request"
+                  onClick={handleSearchFocus}
+                  open={false}
+                  inputRef={searchFieldRef}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "rgba(0, 0, 0, 0.54)" }} />
+                    </InputAdornment>
+                  }
+                  sx={{
+                    "& .MuiSelect-select": {
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      letterSpacing: "0.15px",
+                      paddingLeft: "32px !important",
+                      cursor: "pointer",
+                    },
+                    "& .MuiInputAdornment-root": {
+                      position: "absolute",
+                      left: "12px",
+                      pointerEvents: "none",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "rgba(0, 0, 0, 0.23)",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "rgba(0, 0, 0, 0.87)",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#1976d2",
+                    },
+                  }}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return "Search for a request";
+                    }
+                    return selected;
+                  }}
+                />
+                <FormHelperText
+                  sx={{
+                    fontSize: "12px",
+                    lineHeight: "166%",
+                    letterSpacing: "0.4px",
+                    color: "rgba(0, 0, 0, 0.60)",
+                  }}
+                >
+                  Use Ctrl+K to quickly access commands and actions.
+                </FormHelperText>
+                <Popover
+                  open={isPopoverOpen}
+                  anchorEl={anchorEl}
+                  onClose={handlePopoverClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  TransitionComponent={Fade}
+                  transitionDuration={200}
+                  sx={{
+                    "& .MuiPopover-paper": {
+                      width: `620px`,
+                      maxHeight: 400,
+                      marginTop: "1px",
+                      boxShadow:
+                        "0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)",
+                      transform: "none !important",
+                    },
+                  }}
+                >
+                  {/* Top Case Reasons - Always visible */}
+                  <Box
+                    sx={{
+                      bgcolor: "#F5F5F5",
+                      p: 2,
+                      borderBottom: "1px solid #E0E0E0",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 0.87)" }}
                     >
-                      {option}
-                    </MenuItem>
-                  ))}
-
-                {/* Other Categories as Accordions */}
-                {requestOptions
-                  .filter(cat => cat.category !== "Top Case Reasons")
-                  .map((category) => (
-                    <Accordion
-                      key={category.category}
-                      expanded={expandedCategory === category.category}
-                      onChange={() => handleCategoryChange(category.category)}
-                      disableGutters
-                      elevation={0}
-                      sx={{
-                        "&:before": { display: "none" },
-                        borderBottom: "1px solid #E0E0E0",
-                      }}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                      Top Case Reasons
+                    </Typography>
+                  </Box>
+                  {requestOptions
+                    .find((cat) => cat.category === "Top Case Reasons")
+                    ?.options.map((option) => (
+                      <MenuItem
+                        key={option}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent event bubbling
+                          handleRequestSelect(option);
+                        }}
                         sx={{
-                          bgcolor: "#F5F5F5",
-                          minHeight: "48px",
-                          "& .MuiAccordionSummary-content": {
-                            margin: "12px 0",
-                          },
+                          py: 1.5,
+                          pl: 3,
+                          fontSize: "14px",
+                          color: "rgba(0, 0, 0, 0.87)",
+                          "&:hover": { bgcolor: "#F5F5F5" },
                         }}
                       >
-                        <Typography variant="body2" sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 0.87)" }}>
-                          {category.category}
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails sx={{ p: 0 }}>
-                        {category.options.map((option) => (
-                          <MenuItem
-                            key={option}
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent event bubbling
-                              handleRequestSelect(option);
-                            }}
+                        {option}
+                      </MenuItem>
+                    ))}
+
+                  {/* Other Categories as Accordions */}
+                  {requestOptions
+                    .filter((cat) => cat.category !== "Top Case Reasons")
+                    .map((category) => (
+                      <Accordion
+                        key={category.category}
+                        expanded={expandedCategory === category.category}
+                        onChange={() => handleCategoryChange(category.category)}
+                        disableGutters
+                        elevation={0}
+                        sx={{
+                          "&:before": { display: "none" },
+                          borderBottom: "1px solid #E0E0E0",
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          sx={{
+                            bgcolor: "#F5F5F5",
+                            minHeight: "48px",
+                            "& .MuiAccordionSummary-content": {
+                              margin: "12px 0",
+                            },
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
                             sx={{
-                              py: 1.5,
-                              pl: 3,
-                              fontSize: "14px",
+                              fontWeight: 500,
                               color: "rgba(0, 0, 0, 0.87)",
-                              "&:hover": { bgcolor: "#F5F5F5" },
                             }}
                           >
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </AccordionDetails>
-                    </Accordion>
-                  ))}
-              </Popover>
-            </FormControl>
+                            {category.category}
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ p: 0 }}>
+                          {category.options.map((option) => (
+                            <MenuItem
+                              key={option}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent event bubbling
+                                handleRequestSelect(option);
+                              }}
+                              sx={{
+                                py: 1.5,
+                                pl: 3,
+                                fontSize: "14px",
+                                color: "rgba(0, 0, 0, 0.87)",
+                                "&:hover": { bgcolor: "#F5F5F5" },
+                              }}
+                            >
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </AccordionDetails>
+                      </Accordion>
+                    ))}
+                </Popover>
+              </FormControl>
               <Button
                 variant="contained"
                 onClick={() => {
