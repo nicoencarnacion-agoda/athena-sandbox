@@ -340,12 +340,14 @@ export default function Handling() {
                     <ApartmentIcon sx={{ fontSize: "18px" }} />
                     {bid.label}
                     <IconButton
+                      component="span"
                       size="small"
                       onClick={(e) => handleCloseBID(index, e)}
                       sx={{
                         p: 0.5,
                         ml: 0.5,
                         color: index === activeBIDTab ? "#2196F3" : "#FFF",
+                        cursor: "pointer",
                       }}
                     >
                       <CloseIcon sx={{ fontSize: "20px" }} />
@@ -410,12 +412,14 @@ export default function Handling() {
                     {request.label}
                     {!request.locked && (
                       <IconButton
+                        component="span"
                         size="small"
                         onClick={(e) => handleCloseRequest(index, e)}
                         sx={{
                           p: 0.5,
                           ml: 0.5,
                           color: "rgba(0, 0, 0, 0.56)",
+                          cursor: "pointer",
                         }}
                       >
                         <CloseIcon sx={{ fontSize: "20px" }} />
