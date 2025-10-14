@@ -23,6 +23,10 @@ import Layout from "../components/Layout";
 export default function Search() {
   const [searchType, setSearchType] = useState("Booking ID");
   const [isEditingContact, setIsEditingContact] = useState(false);
+  const [selectedContactType, setSelectedContactType] = useState<string | null>(null);
+  const [selectedContactMethods, setSelectedContactMethods] = useState<string[]>([]);
+  const [internalContactType, setInternalContactType] = useState("");
+  const [ucidCode, setUcidCode] = useState("");
 
   const contactTypes = [
     ["Customer", "Hotel", "Supplier", "B2B"],
@@ -30,6 +34,21 @@ export default function Search() {
   ];
 
   const contactMethods = ["Voice", "Email", "Chat", "Social Media"];
+
+  const handleContactTypeClick = (type: string) => {
+    setSelectedContactType(type === selectedContactType ? null : type);
+    if (type !== "Internal") {
+      setInternalContactType("");
+    }
+  };
+
+  const handleContactMethodClick = (method: string) => {
+    setSelectedContactMethods((prev) =>
+      prev.includes(method)
+        ? prev.filter((m) => m !== method)
+        : [...prev, method]
+    );
+  };
 
   return (
     <Layout>
@@ -91,7 +110,7 @@ export default function Search() {
             sx={{
               display: "flex",
               flexDirection: { xs: "column", lg: "row" },
-              gap: "16px",
+              gap: "24px",
               p: "12px",
               bgcolor: "#FFF",
               borderBottom: "1px solid #E0E0E0",
@@ -128,18 +147,48 @@ export default function Search() {
                     <Chip
                       key={type}
                       label={type}
-                      variant="outlined"
+                      variant={selectedContactType === type ? "filled" : "outlined"}
                       color="primary"
+                      onClick={() => handleContactTypeClick(type)}
                       sx={{
                         fontSize: "16px",
                         letterSpacing: "0.16px",
                         borderRadius: "100px",
+                        cursor: "pointer",
                       }}
                     />
                   ))}
                 </Box>
               ))}
             </Box>
+
+            {selectedContactType === "Internal" && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  flex: 1,
+                }}
+              >
+                <FormControl
+                  variant="outlined"
+                  size="small"
+                  sx={{ bgcolor: "#FFF" }}
+                >
+                  <InputLabel>Type of internal contact</InputLabel>
+                  <Select
+                    value={internalContactType}
+                    label="Type of internal contact"
+                    onChange={(e) => setInternalContactType(e.target.value)}
+                  >
+                    <MenuItem value="Team A">Team A</MenuItem>
+                    <MenuItem value="Team B">Team B</MenuItem>
+                    <MenuItem value="Team C">Team C</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
 
             <Box
               sx={{
@@ -170,12 +219,16 @@ export default function Search() {
                   <Chip
                     key={method}
                     label={method}
-                    variant="outlined"
+                    variant={
+                      selectedContactMethods.includes(method) ? "filled" : "outlined"
+                    }
                     color="primary"
+                    onClick={() => handleContactMethodClick(method)}
                     sx={{
                       fontSize: "16px",
                       letterSpacing: "0.16px",
                       borderRadius: "100px",
+                      cursor: "pointer",
                     }}
                   />
                 ))}
@@ -188,12 +241,15 @@ export default function Search() {
                 flexDirection: "column",
                 gap: "12px",
                 flex: 1,
+                justifyContent: selectedContactType === "Internal" ? "center" : "flex-start",
               }}
             >
               <TextField
                 label="UCID / Contact code"
                 variant="outlined"
                 size="small"
+                value={ucidCode}
+                onChange={(e) => setUcidCode(e.target.value)}
                 sx={{
                   bgcolor: "#FFF",
                 }}
