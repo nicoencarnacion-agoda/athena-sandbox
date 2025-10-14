@@ -11,6 +11,7 @@ import {
   Button,
   Alert,
   Link,
+  Chip,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -21,6 +22,14 @@ import Layout from "../components/Layout";
 
 export default function Search() {
   const [searchType, setSearchType] = useState("Booking ID");
+  const [isEditingContact, setIsEditingContact] = useState(false);
+
+  const contactTypes = [
+    ["Customer", "Hotel", "Supplier", "B2B"],
+    ["Vendor", "Internal", "Other"],
+  ];
+
+  const contactMethods = ["Voice", "Email", "Chat", "Social Media"];
 
   return (
     <Layout>
@@ -62,6 +71,10 @@ export default function Search() {
             <Link
               href="#"
               underline="always"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsEditingContact(!isEditingContact);
+              }}
               sx={{
                 color: "#2196F3",
                 fontSize: "16px",
@@ -72,6 +85,152 @@ export default function Search() {
             </Link>
           </Box>
         </Box>
+
+        {isEditingContact && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", lg: "row" },
+              gap: "16px",
+              p: "12px",
+              bgcolor: "#FFF",
+              borderBottom: "1px solid #E0E0E0",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                flex: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "rgba(0, 0, 0, 0.87)",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  letterSpacing: "0.17px",
+                }}
+              >
+                Contact type
+              </Typography>
+              {contactTypes.map((row, rowIndex) => (
+                <Box
+                  key={rowIndex}
+                  sx={{
+                    display: "flex",
+                    gap: "8px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {row.map((type) => (
+                    <Chip
+                      key={type}
+                      label={type}
+                      variant="outlined"
+                      color="primary"
+                      sx={{
+                        fontSize: "16px",
+                        letterSpacing: "0.16px",
+                        borderRadius: "100px",
+                      }}
+                    />
+                  ))}
+                </Box>
+              ))}
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                flex: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "rgba(0, 0, 0, 0.87)",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  letterSpacing: "0.17px",
+                }}
+              >
+                Method of contact
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "8px",
+                  flexWrap: "wrap",
+                }}
+              >
+                {contactMethods.map((method) => (
+                  <Chip
+                    key={method}
+                    label={method}
+                    variant="outlined"
+                    color="primary"
+                    sx={{
+                      fontSize: "16px",
+                      letterSpacing: "0.16px",
+                      borderRadius: "100px",
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                flex: 1,
+              }}
+            >
+              <TextField
+                label="UCID / Contact code"
+                variant="outlined"
+                size="small"
+                sx={{
+                  bgcolor: "#FFF",
+                }}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: { xs: "flex-start", lg: "flex-end" },
+                flex: 1,
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "26px",
+                  letterSpacing: "0.46px",
+                  textTransform: "none",
+                  px: "22px",
+                  py: "8px",
+                  bgcolor: "#2196F3",
+                  color: "#FFF",
+                  boxShadow:
+                    "0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.20)",
+                  "&:hover": { bgcolor: "#1976D2" },
+                  width: { xs: "100%", lg: "auto" },
+                }}
+              >
+                Save contact
+              </Button>
+            </Box>
+          </Box>
+        )}
 
         <Box
           sx={{
