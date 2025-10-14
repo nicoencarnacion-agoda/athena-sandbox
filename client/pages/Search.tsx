@@ -50,15 +50,20 @@ export default function Search() {
     );
   };
 
-  const chipStyles = {
+  const getChipStyles = (isSelected: boolean) => ({
     fontSize: "16px",
     letterSpacing: "0.16px",
     borderRadius: "100px",
     cursor: "pointer",
+    borderColor: "#2196F3",
+    color: isSelected ? "#FFF" : "#2196F3",
+    bgcolor: isSelected ? "#2196F3" : "transparent",
     "& .MuiChip-label": {
-      color: "inherit",
+      color: isSelected ? "#FFF" : "#2196F3",
+      fontSize: "16px",
+      letterSpacing: "0.16px",
     },
-  } as const;
+  });
 
   return (
     <Layout>
@@ -153,22 +158,19 @@ export default function Search() {
                     flexWrap: "wrap",
                   }}
                 >
-                  {row.map((type) => (
-                    <Chip
-                      key={type}
-                      label={type}
-                      variant={selectedContactType === type ? "filled" : "outlined"}
-                      color="primary"
-                      onClick={() => handleContactTypeClick(type)}
-                      sx={{
-                        ...chipStyles,
-                        color: selectedContactType === type ? "#FFF" : "#2196F3",
-                        bgcolor:
-                          selectedContactType === type ? "#2196F3" : "transparent",
-                        borderColor: "#2196F3",
-                      }}
-                    />
-                  ))}
+                  {row.map((type) => {
+                    const isSelected = selectedContactType === type;
+                    return (
+                      <Chip
+                        key={type}
+                        label={type}
+                        variant={isSelected ? "filled" : "outlined"}
+                        color="primary"
+                        onClick={() => handleContactTypeClick(type)}
+                        sx={getChipStyles(isSelected)}
+                      />
+                    );
+                  })}
                 </Box>
               ))}
             </Box>
@@ -235,12 +237,7 @@ export default function Search() {
                       variant={isSelected ? "filled" : "outlined"}
                       color="primary"
                       onClick={() => handleContactMethodClick(method)}
-                      sx={{
-                        ...chipStyles,
-                        color: isSelected ? "#FFF" : "#2196F3",
-                        bgcolor: isSelected ? "#2196F3" : "transparent",
-                        borderColor: "#2196F3",
-                      }}
+                      sx={getChipStyles(isSelected)}
                     />
                   );
                 })}
@@ -399,4 +396,137 @@ export default function Search() {
               display: "flex",
               flexDirection: "column",
               alignItems: { xs: "flex-start", md: "flex-end" },
-              justifyursively contextual logic
+              justifyContent: "center",
+              gap: "2px",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "rgba(0, 0, 0, 0.87)",
+                fontSize: "12px",
+                letterSpacing: "0.4px",
+              }}
+            >
+              Last updated 20 Nov 14:22
+            </Typography>
+            <Button
+              startIcon={<CachedIcon />}
+              sx={{
+                color: "#2196F3",
+                fontSize: "12px",
+                fontWeight: 500,
+                letterSpacing: "0.46px",
+                textTransform: "none",
+                px: "5px",
+                py: "4px",
+                minWidth: 0,
+              }}
+            >
+              Refresh results
+            </Button>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: "32px",
+            px: "24px",
+            pb: "24px",
+            overflow: "auto",
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <Typography
+              sx={{
+                color: "rgba(0, 0, 0, 0.87)",
+                fontSize: "20px",
+                fontWeight: 500,
+                lineHeight: "32px",
+                letterSpacing: "0.15px",
+              }}
+            >
+              Bookings (0)
+            </Typography>
+            <Alert
+              icon={<InfoIcon sx={{ color: "#0288D1" }} />}
+              severity="info"
+              sx={{
+                bgcolor: "#E5F6FD",
+                color: "#014361",
+                fontSize: "14px",
+                letterSpacing: "0.17px",
+                boxShadow:
+                  "0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)",
+              }}
+            >
+              Please perform a search to proceed
+            </Alert>
+          </Box>
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <Typography
+              sx={{
+                color: "rgba(0, 0, 0, 0.87)",
+                fontSize: "20px",
+                fontWeight: 500,
+                lineHeight: "32px",
+                letterSpacing: "0.15px",
+              }}
+            >
+              Requests (0)
+            </Typography>
+            <Alert
+              icon={<InfoIcon sx={{ color: "#0288D1" }} />}
+              severity="info"
+              sx={{
+                bgcolor: "#E5F6FD",
+                color: "#014361",
+                fontSize: "14px",
+                letterSpacing: "0.17px",
+                boxShadow:
+                  "0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.20)",
+              }}
+            >
+              Please select a booking to see the related cases.
+            </Alert>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: "8px",
+            p: "12px",
+            borderTop: "1px solid #E0E0E0",
+            bgcolor: "#FFF",
+          }}
+        >
+          <Button
+            variant="contained"
+            sx={{
+              fontSize: "16px",
+              fontWeight: 500,
+              lineHeight: "26px",
+              letterSpacing: "0.46px",
+              textTransform: "none",
+              px: "22px",
+              py: "8px",
+              bgcolor: "#2196F3",
+              color: "#FFF",
+              boxShadow:
+                "0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.20)",
+              "&:hover": { bgcolor: "#1976D2" },
+            }}
+          >
+            Next
+          </Button>
+        </Box>
+      </Box>
+    </Layout>
+  );
+}
