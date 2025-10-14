@@ -23,8 +23,12 @@ import Layout from "../components/Layout";
 export default function Search() {
   const [searchType, setSearchType] = useState("Booking ID");
   const [isEditingContact, setIsEditingContact] = useState(false);
-  const [selectedContactType, setSelectedContactType] = useState<string | null>(null);
-  const [selectedContactMethods, setSelectedContactMethods] = useState<string[]>([]);
+  const [selectedContactType, setSelectedContactType] = useState<string | null>(
+    null,
+  );
+  const [selectedContactMethods, setSelectedContactMethods] = useState<
+    string[]
+  >([]);
   const [internalContactType, setInternalContactType] = useState("");
   const [ucidCode, setUcidCode] = useState("");
 
@@ -46,7 +50,7 @@ export default function Search() {
     setSelectedContactMethods((prev) =>
       prev.includes(method)
         ? prev.filter((m) => m !== method)
-        : [...prev, method]
+        : [...prev, method],
     );
   };
 
@@ -250,7 +254,8 @@ export default function Search() {
                 flexDirection: "column",
                 gap: "12px",
                 flex: 1,
-                justifyContent: selectedContactType === "Internal" ? "center" : "flex-start",
+                justifyContent:
+                  selectedContactType === "Internal" ? "center" : "flex-start",
               }}
             >
               <TextField

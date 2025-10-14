@@ -165,7 +165,13 @@ export default function Index() {
             </Button>
           </Box>
 
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+            }}
+          >
             <Typography
               sx={{
                 color: "rgba(0, 0, 0, 0.87)",
