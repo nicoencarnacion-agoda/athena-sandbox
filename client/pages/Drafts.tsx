@@ -13,15 +13,18 @@ import {
   Typography,
   SelectChangeEvent,
   InputAdornment,
+  Popover,
 } from "@mui/material";
 import {
   Description,
   NoteAdd,
   Link as LinkIcon,
   AttachFile,
+  Translate,
   ArrowDropDown,
   Cancel,
 } from "@mui/icons-material";
+import { languages } from "../data/templates";
 
 const emailOptions = [
   "BIZ.EN@AGODA.COM",
@@ -65,6 +68,8 @@ export default function Drafts() {
   const [nickname, setNickname] = useState("Ben");
   const [emailBody, setEmailBody] = useState(DEFAULT_EMAIL_BODY);
   const [toFocused, setToFocused] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("EN");
+  const [languageMenuAnchor, setLanguageMenuAnchor] = useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const labelStyles = {
@@ -127,6 +132,19 @@ export default function Drafts() {
       setToInputValue("");
     }
     setToFocused(false);
+  };
+
+  const handleLanguageClick = (event: React.MouseEvent<HTMLElement>) => {
+    setLanguageMenuAnchor(event.currentTarget);
+  };
+
+  const handleLanguageClose = () => {
+    setLanguageMenuAnchor(null);
+  };
+
+  const handleLanguageSelect = (languageCode: string) => {
+    setSelectedLanguage(languageCode);
+    handleLanguageClose();
   };
 
   const shouldShrinkLabel =
@@ -338,8 +356,78 @@ export default function Drafts() {
                 >
                   Attach file
                 </Button>
+                <Button
+                  variant="text"
+                  size="small"
+                  startIcon={
+                    <Translate sx={{ fontSize: "18px !important" }} />
+                  }
+                  onClick={handleLanguageClick}
+                  sx={{
+                    color: "rgba(0, 0, 0, 0.87)",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    lineHeight: "22px",
+                    letterSpacing: "0.46px",
+                    textTransform: "none",
+                    minHeight: "32px",
+                  }}
+                >
+                  Translate
+                </Button>
               </Box>
             </Box>
+
+            <Popover
+              open={Boolean(languageMenuAnchor)}
+              anchorEl={languageMenuAnchor}
+              onClose={handleLanguageClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              PaperProps={{
+                sx: {
+                  p: 2,
+                  width: 'auto'
+                }
+              }}
+            >
+              <Box 
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: 2,
+                  p: 0,
+                  width: 'fit-content',
+                }}
+              >
+                {languages.map((language) => (
+                  <Button
+                    key={language.code}
+                    onClick={() => handleLanguageSelect(language.code)}
+                    sx={{
+                      justifyContent: 'center',
+                      color: selectedLanguage === language.code ? 'primary.main' : 'rgba(0, 0, 0, 0.87)',
+                      fontSize: '16px',
+                      fontWeight: selectedLanguage === language.code ? 500 : 400,
+                      py: 0.5,
+                      minWidth: '40px',
+                      '&:hover': {
+                        backgroundColor: 'transparent',
+                        color: 'primary.main',
+                      },
+                    }}
+                  >
+                    {language.code}
+                  </Button>
+                ))}
+              </Box>
+            </Popover>
 
             <Box
               sx={{
