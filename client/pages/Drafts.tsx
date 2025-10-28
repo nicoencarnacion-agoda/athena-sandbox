@@ -13,6 +13,7 @@ import {
   Typography,
   SelectChangeEvent,
   InputAdornment,
+  Popover,
 } from "@mui/material";
 import {
   Description,
@@ -66,6 +67,7 @@ export default function Drafts() {
   const [emailBody, setEmailBody] = useState(DEFAULT_EMAIL_BODY);
   const [toFocused, setToFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [toneMenuAnchor, setToneMenuAnchor] = useState<null | HTMLElement>(null);
 
   const labelStyles = {
     fontSize: "12px",
@@ -338,6 +340,68 @@ export default function Drafts() {
                 >
                   Attach file
                 </Button>
+                <Button
+                  variant="text"
+                  size="small"
+                  endIcon={<ArrowDropDown sx={{ fontSize: "18px !important" }} />}
+                  onClick={(e) => setToneMenuAnchor(e.currentTarget)}
+                  sx={{
+                    color: "rgba(0, 0, 0, 0.87)",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    lineHeight: "22px",
+                    letterSpacing: "0.46px",
+                    textTransform: "none",
+                    minHeight: "32px",
+                  }}
+                >
+                  Improve tone
+                </Button>
+                <Popover
+                  open={Boolean(toneMenuAnchor)}
+                  anchorEl={toneMenuAnchor}
+                  onClose={() => setToneMenuAnchor(null)}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  PaperProps={{
+                    sx: { p: 1 }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, minWidth: 180 }}>
+                    <Button
+                      variant="text"
+                      onClick={() => setToneMenuAnchor(null)}
+                      sx={{
+                        justifyContent: 'flex-start',
+                        color: 'rgba(0, 0, 0, 0.87)',
+                        fontSize: '14px',
+                        textTransform: 'none',
+                        px: 1.5,
+                      }}
+                    >
+                      More empathetic
+                    </Button>
+                    <Button
+                      variant="text"
+                      onClick={() => setToneMenuAnchor(null)}
+                      sx={{
+                        justifyContent: 'flex-start',
+                        color: 'rgba(0, 0, 0, 0.87)',
+                        fontSize: '14px',
+                        textTransform: 'none',
+                        px: 1.5,
+                      }}
+                    >
+                      More direct
+                    </Button>
+                  </Box>
+                </Popover>
               </Box>
             </Box>
 
