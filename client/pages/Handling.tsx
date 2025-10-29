@@ -490,7 +490,7 @@ export default function Handling() {
                   }}
                 >
                   <iframe
-                    src="https://6995f188af0d4903ad98d4d7a2b0fd37-main.projects.builder.my/"
+                    src="https://fusion-starter-app.netlify.app/"
                     style={{
                       width: "100%",
                       height: "100%",
