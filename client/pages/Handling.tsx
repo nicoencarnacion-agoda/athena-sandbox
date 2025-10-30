@@ -490,7 +490,7 @@ export default function Handling() {
                   }}
                 >
                   <iframe
-                    src="https://fusion-starter-app.netlify.app/"
+                    src="https://wizard-collective.netlify.app/"
                     style={{
                       width: "100%",
                       height: "100%",
