@@ -81,7 +81,7 @@ export default function Search() {
           overflow: "hidden",
         }}
       >
-        <h1>MORMAE!!!!</h1>
+        <h1 style={{ color: 'red' }}>MORMAE!!!!</h1>
         <Box
           sx={{
             display: "flex",
