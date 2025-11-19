@@ -28,6 +28,7 @@ import {
   ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
 import Layout from "../components/Layout";
+import BottomPanel from "../components/BottomPanel";
 
 interface RequestTab {
   id: string;
@@ -467,6 +468,7 @@ export default function Handling() {
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "flex-start",
+            position: "relative",
           }}
         >
           {isWizardVisible ? (
@@ -477,6 +479,7 @@ export default function Handling() {
                   display: "flex",
                   width: "100%",
                   height: "100%",
+                  position: "relative",
                 }}
               >
                 {/* Wizard */}
@@ -494,7 +497,6 @@ export default function Handling() {
                     style={{
                       width: "100%",
                       height: "100%",
-                      border: "none",
                       borderRadius: "4px",
                       border: "1px solid #E0E0E0",
                     }}
@@ -510,6 +512,7 @@ export default function Handling() {
                     bgcolor: "#fff",
                     borderLeft: "1px solid #E0E0E0",
                     p: 3,
+                    overflow: "auto",
                   }}
                 >
                   <Typography variant="h6" sx={{ mb: 2 }}>
@@ -528,7 +531,7 @@ export default function Handling() {
                     color="text.secondary"
                     sx={{ mb: 3 }}
                   >
-                    Lorem ipsum placeholder
+                    Please input here
                   </Typography>
 
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
@@ -539,7 +542,7 @@ export default function Handling() {
                     color="text.secondary"
                     sx={{ mb: 1 }}
                   >
-                    Lorem ipsum placeholder
+                    Please input here
                   </Typography>
                   <Box sx={{ pl: 2, mb: 3 }}>
                     <Typography variant="body2" color="text.secondary">
@@ -558,14 +561,22 @@ export default function Handling() {
                     color="text.secondary"
                     sx={{ mb: 1 }}
                   >
-                    Lorem ipsum placeholder
+                    Example:
                   </Typography>
-                  <Box sx={{ pl: 2 }}>
+                  <Box
+                    sx={{
+                      pl: 2,
+                      p: 1.5,
+                      bgcolor: "#E3F2FD",
+                      borderRadius: 1,
+                      border: "1px solid #90CAF9",
+                    }}
+                  >
                     <Typography variant="body2" color="text.secondary">
-                      1. Action item
+                      1. Legal threaten / Complaint hard
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      2. Action item
+                      2. Customers' preferred number to be contacted back, etc
                     </Typography>
                   </Box>
                 </Box>
@@ -800,6 +811,9 @@ export default function Handling() {
               </Button>
             </Box>
           )}
+
+          {/* Bottom Panel - always visible */}
+          <BottomPanel bookingId={activeBid?.label.split(": ")[1]} />
         </Box>
       </Box>
     </Layout>
