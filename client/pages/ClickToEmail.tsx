@@ -1,5 +1,5 @@
 // Copying content from Recipients.tsx with the new name
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, type ChangeEvent } from "react";
 import {
   Box,
   Tabs,
@@ -9,7 +9,6 @@ import {
   Select,
   MenuItem,
   Alert,
-  SelectChangeEvent,
   useMediaQuery,
   useTheme,
   Drawer,
@@ -45,11 +44,15 @@ export default function ClickToEmail() {
     setActiveTab(newValue);
   };
 
-  const handleContactTypeChange = (event: SelectChangeEvent) => {
+  const handleContactTypeChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setContactType(event.target.value);
   };
 
-  const handleUcidChange = (event: SelectChangeEvent) => {
+  const handleUcidChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setUcid(event.target.value);
   };
 
