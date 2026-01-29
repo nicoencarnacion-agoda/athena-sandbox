@@ -36,7 +36,7 @@ import {
   ChevronRight as ChevronRightIcon,
   ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
-import ActivityTimeline from "./ActivityTimeline";
+import ActivityLogPanel from "./ActivityLogPanel";
 
 type PanelPosition = "bottom" | "middle" | "fullscreen";
 
@@ -1086,6 +1086,8 @@ const BottomPanel = ({ bookingId = "00000001" }: BottomPanelProps) => {
             border: "1px solid #E0E0E0",
             borderRadius: "4px",
             mx: "16px",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <Box
@@ -1094,6 +1096,11 @@ const BottomPanel = ({ bookingId = "00000001" }: BottomPanelProps) => {
               display: "flex",
               alignItems: "center",
               gap: 1,
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+              bgcolor: "#FAFAFA",
+              borderBottom: "1px solid #E0E0E0",
             }}
           >
             <ActivityIcon sx={{ fontSize: "20px", color: "rgba(0, 0, 0, 0.54)" }} />
@@ -1101,8 +1108,14 @@ const BottomPanel = ({ bookingId = "00000001" }: BottomPanelProps) => {
               Activity log
             </Typography>
           </Box>
-          <Box sx={{ p: 1.5 }}>
-            <ActivityTimeline />
+          <Box
+            sx={{
+              p: 1.5,
+              height: "min(720px, calc(100vh - 360px))",
+              minHeight: 480,
+            }}
+          >
+            <ActivityLogPanel />
           </Box>
         </Box>
         </Box>
