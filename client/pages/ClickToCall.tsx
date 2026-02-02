@@ -129,9 +129,7 @@ export default function ClickToCall() {
               variant="outlined"
               label="Contact type"
               value={contactType}
-              onChange={(event: SelectChangeEvent) =>
-                setContactType(event.target.value as string)
-              }
+              onChange={(event) => setContactType(event.target.value)}
               sx={{
                 "& .MuiInputBase-input": {
                   fontSize: "16px",

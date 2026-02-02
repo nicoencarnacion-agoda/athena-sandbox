@@ -38,6 +38,7 @@ import {
   EmailOutlined as EmailIcon,
   InfoOutlined as InfoIcon,
 } from "@mui/icons-material";
+import ActivityLogTable from "./ActivityLogTable";
 
 type PanelPosition = "bottom" | "middle" | "fullscreen";
 
@@ -1089,122 +1090,8 @@ const BottomPanel = ({ bookingId = "00000001" }: BottomPanelProps) => {
             mx: "16px",
           }}
         >
-          <Box
-            sx={{
-              p: 1.5,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <ActivityIcon sx={{ fontSize: "20px", color: "rgba(0, 0, 0, 0.54)" }} />
-            <Typography variant="h6" sx={{ fontSize: "20px", fontWeight: 500 }}>
-              Activity log
-            </Typography>
-          </Box>
           <Box sx={{ p: 1.5 }}>
-            {/* Filters */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="View all history"
-                sx={{ '& .MuiFormControlLabel-label': { fontSize: "14px" } }}
-              />
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography sx={{ fontSize: "13px" }}>Show</Typography>
-                <FormControl size="small" sx={{ minWidth: 150 }}>
-                  <Select defaultValue="all" sx={{ fontSize: "13px" }}>
-                    <MenuItem value="all">All</MenuItem>
-                    <MenuItem value="emails">Emails only</MenuItem>
-                    <MenuItem value="actions">Actions only</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-            </Box>
-
-            {/* Activity Log Table */}
-            <TableContainer 
-              sx={{ 
-                bgcolor: "#FFF", 
-                border: "1px solid #E0E0E0", 
-                borderRadius: "4px",
-                overflow: "hidden"
-              }}
-            >
-              <Table 
-                size="small"
-                sx={{
-                  '& td, & th': { borderRight: '1px solid #E0E0E0' },
-                  '& td:last-child, & th:last-child': { borderRight: 0 }
-                }}
-              >
-                <TableHead>
-                  <TableRow sx={{ bgcolor: "#F5F5F5" }}>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px" }}>Seq</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px" }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px" }}>Action taken</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px" }}>Action result</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px", textAlign: "center" }}>Agoda email</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px", textAlign: "center" }}>BCOM email</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px", textAlign: "center" }}>Remark</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: "12px" }}>By</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {[...Array(10)].map((_, index) => (
-                    <TableRow 
-                      key={index}
-                      sx={{ 
-                        '&:hover': { bgcolor: '#F5F5F5' },
-                        '&:last-child td, &:last-child th': { borderBottom: 0 }
-                      }}
-                    >
-                      <TableCell sx={{ fontSize: "13px" }}>3</TableCell>
-                      <TableCell sx={{ fontSize: "13px", whiteSpace: "nowrap" }}>18-Feb-2021 10:26:00</TableCell>
-                      <TableCell sx={{ fontSize: "13px" }}>Cancelled booking (cust request)</TableCell>
-                      <TableCell sx={{ fontSize: "13px" }}>Email sent successfully</TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
-                        <IconButton size="small" sx={{ color: "#2196F3" }}>
-                          <EmailIcon sx={{ fontSize: "18px" }} />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
-                        <IconButton size="small" sx={{ color: "#2196F3" }}>
-                          <EmailIcon sx={{ fontSize: "18px" }} />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
-                        <IconButton size="small" sx={{ color: "#2196F3" }}>
-                          <InfoIcon sx={{ fontSize: "18px" }} />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "13px", whiteSpace: "nowrap" }}>
-                        esolis | Eunice<br/>
-                        EN-IG | Agoda senior mgt | Priceline
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            {/* Pagination */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mt: 2, gap: 2 }}>
-              <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.60)" }}>
-                Rows per page: 15
-              </Typography>
-              <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.60)" }}>
-                1-14 of 14
-              </Typography>
-              <Box sx={{ display: "flex", gap: 0.5 }}>
-                <IconButton size="small" disabled>
-                  <ArrowUpIcon sx={{ transform: "rotate(-90deg)", fontSize: "20px" }} />
-                </IconButton>
-                <IconButton size="small" disabled>
-                  <ArrowUpIcon sx={{ transform: "rotate(90deg)", fontSize: "20px" }} />
-                </IconButton>
-              </Box>
-            </Box>
+            <ActivityLogTable />
           </Box>
         </Box>
         </Box>
