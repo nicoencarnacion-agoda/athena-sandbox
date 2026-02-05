@@ -4,6 +4,10 @@ import {
   Button,
   Chip,
   Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Drawer,
   IconButton,
   Paper,
@@ -16,6 +20,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import {
@@ -29,12 +34,17 @@ import {
   ContentCopy as CopyIcon,
   DescriptionOutlined as DetailsIcon,
   ForumOutlined as ConversationIcon,
-  NorthWest as NorthWestIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  NorthEast as NorthEastIcon,
   SouthEast as SouthEastIcon,
+  MailOutline as MailOutlineIcon,
+  Person as PersonIcon,
+  SentimentSatisfiedAlt as SmileyIcon,
 } from "@mui/icons-material";
 
 type ContactType = "email" | "messaging" | "voice" | "system";
-type PartyTag = "Supplier" | "Customer";
+type PartyTag = "Supplier" | "Customer" | "System";
 
 type ActivityRow = {
   id: string;
@@ -59,24 +69,77 @@ type ActivityRow = {
 
 const CONTACT_PILL: Record<
   Exclude<ContactType, "system">,
-  { label: string; bg: string; fg: string; Icon: React.ElementType }
+  { label: string; bg: string; fg: string }
 > = {
-  email: { label: "Email", bg: "#3F51B5", fg: "#FFF", Icon: EmailIcon },
-  messaging: { label: "Messaging", bg: "#D81B60", fg: "#FFF", Icon: MessagingIcon },
-  voice: { label: "Voice", bg: "#00695C", fg: "#FFF", Icon: VoiceIcon },
+  email: { label: "Email", bg: "#3F51B5", fg: "#FFF" },
+  messaging: { label: "Messaging", bg: "#D81B60", fg: "#FFF" },
+  voice: { label: "Voice", bg: "#00695C", fg: "#FFF" },
 };
 
 // Order/content mirrors the provided screenshots (toggle OFF hides system rows).
 const rowsAll: ActivityRow[] = [
   // System logs (only visible when toggled ON)
   {
-    id: "s-booking-departure",
+    id: "s-send-refund-processed",
     contactType: "system",
     dateReceived: "-",
-    dateClosedOrSent: "17 Nov 2025 01:52 pm",
-    from: { value: "departure agent", subValue: "ChangeBookingState to 505" },
+    dateClosedOrSent: "18 Nov 2025 01:52 pm",
+    from: { value: "auto mail", subValue: "CancelBookingConfirm - Success" },
     to: { value: "-" },
-    summary: { title: "Booking Completed (pending departure)", body: "Departed" },
+    summary: { title: "Send Refund Processed", body: "Sent Successfully" },
+  },
+  {
+    id: "s-cc-auto-refund-refunded",
+    contactType: "system",
+    dateReceived: "-",
+    dateClosedOrSent: "18 Nov 2025 01:52 pm",
+    from: { value: "auto payment", subValue: "1: Operation Success." },
+    to: { value: "-" },
+    summary: { title: "CC Auto Refund (Cxl)", body: "Refunded successfully" },
+  },
+  {
+    id: "s-cc-auto-refund-charge-details",
+    contactType: "system",
+    dateReceived: "-",
+    dateClosedOrSent: "18 Nov 2025 01:52 pm",
+    from: { value: "auto payment" },
+    to: { value: "-" },
+    summary: { title: "CC Auto Refund (Cxl)", body: "Charge Details Added" },
+  },
+  {
+    id: "s-cancellation-ack-to-dmc",
+    contactType: "system",
+    dateReceived: "-",
+    dateClosedOrSent: "18 Nov 2025 01:52 pm",
+    from: { value: "auto provision", subValue: "Sent by Pigeon" },
+    to: { value: "-" },
+    summary: {
+      title: "Sending Copy of Cancellation Acknowledged to DMC",
+      body: "Sent Successfully",
+    },
+  },
+  {
+    id: "s-booking-provisioning-cancellation",
+    contactType: "system",
+    dateReceived: "-",
+    dateClosedOrSent: "18 Nov 2025 01:52 pm",
+    from: { value: "auto mail", subValue: "CancelBookingConfirm - Success" },
+    to: { value: "-" },
+    summary: { title: "Booking Provisioning for Cancellation", body: "Confirm Cancellation" },
+  },
+  // Contact row (always visible) - Booking cancellation email
+  {
+    id: "r18",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "18 Nov 2025 01:52 pm",
+    from: { value: "CUSTOMER-SERVICE@AGODA.COM", tag: "System" },
+    to: { value: "lucasheil@id.uff.br", tag: "Customer" },
+    summary: {
+      title: "Agoda has cancelled your booking -- Booking ID: 1929586320",
+      body:
+        "We're sorry, your booking has been cancelled by the supplier. Dear Lucas Heil, Booking ID: 930329922 We have confirmed the cancellation of your booking at Lagune Barra Hotel Your booking has been cancelled for free. Any payment made for this booking will be refunded. Make another booking Book another room Agoda has initiated a refund to your initi...",
+    },
   },
   {
     id: "r1",
@@ -90,7 +153,6 @@ const rowsAll: ActivityRow[] = [
         "回复：Agoda Booking ID 930329922/ Bingtrip8251106060409922- Hotel Country:Brazil Check in Date: November...",
       body:
         "Hotel lady ala informed that the order has been confirmed normally. Hotel confirmation number: RES000101-19802 -----The following replies in Chinese are for bingtrip internal employees only for follow-up records------- Best Regard,...",
-      linkLabel: "View email",
     },
     drawer: {
       kind: "email",
@@ -124,7 +186,6 @@ const rowsAll: ActivityRow[] = [
         "Re: RESERVA NÃO LOCALIZADA | LAGUNE BARRA HOTEL Key: [def01] L:PT GPTS A:3IU5 PC07 [rogu02] S:1705 S ...",
       body:
         "Bom dia! [1] I have contacted our partner, and they have provided the hotel confirmation number 2328694168. Please inform the hotel that the booking is from Expedia and not Agoda.please check with the hotel and let us know...",
-      linkLabel: "View email",
     },
   },
   {
@@ -146,8 +207,7 @@ const rowsAll: ActivityRow[] = [
     summary: {
       title: "",
       body:
-        "This customer first entered their question to our chatbot, but later insisted later on talking to an agent. Please continue with usual handling on Athena - if not verified automatically, fill in the verification (no need to verify with pa...",
-      linkLabel: "View conversation",
+        "This customer first entered their question to our chatbot, but later insisted later on talking to an agent. Please continue with usual handling on Athena - if not verified automatically, fill in the verification (no need to verify with pax as they already verified in chatbot).",
     },
     drawer: {
       kind: "conversation",
@@ -199,12 +259,11 @@ const rowsAll: ActivityRow[] = [
     dateReceived: "-",
     dateClosedOrSent: "8 Nov 2025 11:53 am",
     from: { value: "Zaieynab Mustapha | zmustapha | Accom - MY | CSS Agent | KUL" },
-    to: { value: "rafael.silva@hbxgroup.com", tag: "Supplier" },
+    to: { value: "john.jumero@hbxgroup.com", tag: "Supplier" },
     summary: {
       title: "RE: RES: RES: Agoda Booking ID 930329922 - Check in: November 15, 2025 ACCOM",
       body:
         "Dear Lagune Barra Hotel, Greetings from Agoda! Please be informed that this is a third party booking. Kindly contact the partner for further assistance regarding this booking. Regards, Zaieynab Agoda Customer Experience Group",
-      linkLabel: "View conversation",
     },
   },
   {
@@ -228,7 +287,6 @@ const rowsAll: ActivityRow[] = [
         "RES: RES: Agoda Booking ID 930329922 - Check in: November 15, 2025 ACCOM Key: WL_1; S:22820 L:PT HCBR G...",
       body:
         "Boa noite, Ana! Tudo bem? Busquei em nosso sistema todas as reservas (confirmadas ou não, com check in para o dia 15/11/2025 e não localizei nada com este nome. Segue abaixo a lista.",
-      linkLabel: "View conversation",
     },
   },
   {
@@ -252,7 +310,6 @@ const rowsAll: ActivityRow[] = [
         "RES: RES: Agoda Booking ID 930329922 - Check in: November 15, 2025 ACCOM Key: WL_1; S:22880 L:PT HCBR G...",
       body:
         "Olá, Lucas Heil Figueira Carnevale, Cumprimentos da Agoda! Com referência à sua reserva de n.º 930329922 confirme detalhado abaixo: Hotel: Lagune Barra Hotel Cidade/País ou Região: Rio De Janeiro/Brazil Chegada: Nove...",
-      linkLabel: "View conversation",
     },
   },
   {
@@ -284,6 +341,98 @@ const rowsAll: ActivityRow[] = [
       linkLabel: undefined,
     },
   },
+  // Page 2 (11-17 of 17) - content mirrors the provided screenshot
+  {
+    id: "r11",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "07 Nov 2025 06:11 am",
+    from: { value: "pca", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "Agoda Booking ID 930329922 Check in November 15, 2025",
+      body:
+        "Здравствуйте, Gulnur! Вас приветствует Agoda. Мы обращаемся к вам по поводу вашего бронирования № 568534855: Отель: LAGUNE BARRA HOTEL Город: Milan Страна/ регион: Italy Заезд: 15 November 2025 Выезд: 18 November 2025 Мы знаем, что вы бы хотели как можно скорее получить решение по вашему запросу, поэтому просим...",
+    },
+  },
+  {
+    id: "r12",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "06 Nov 2025 14:24 pm",
+    from: { value: "CUSTOMER-SERVICE@AGODA.COM", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "Agoda Booking ID 930329922 – RECEIPT enclosed",
+      body:
+        "Dear Rafael Silva, As requested, we are sending you a PDF copy of your receipt for your Agoda booking. Thank you for choosing Agoda. Best regards, Agoda Customer Experience Group\n1 attachment: Agoda_RECEIPT_enclosed.pdf",
+    },
+  },
+  {
+    id: "r13",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "06 Nov 2025 14:23 pm",
+    from: { value: "auto email forward (booking.com)", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "Are you satisfied with our Customer Service?",
+      body:
+        "Are you satisfied with our Customer Service? Your booking at LAGUNE BARRA HOTEL | Check-in: 15 Aug 2025 | Manage booking Booking.com Confirmation number: 6595758631 PIN code: 2900...",
+    },
+  },
+  {
+    id: "r14",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "06 Nov 2025 14:22 pm",
+    from: { value: "auto email forward (booking.com)", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "A refund for your reservation 6595758631 is ready for you to claim",
+      body:
+        "Hello Rafael Silva, Thank you for your reply regarding reservation 6595758631. We will be happy to refund € 10 to your credit card. To complete this transaction, please click on the following link and enter your credit card information. https://secure.booking.com/payout.html?ncid=YzQxNTJiMGMtYmUxYy00ZTQwLThjNzMtYjI5NWNJYzBmODRj Refunds usually...",
+    },
+  },
+  {
+    id: "r15",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "06 Nov 2025 14:21 pm",
+    from: { value: "auto email forward (booking.com)", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "Reservation 6595758631: Customer Service will look into your report",
+      body:
+        "Reservation 6595758631: Customer Service will look into your report Booking.com Confirmation: 6595758631 Hi Rafael, We've asked LAGUNE BARRA HOTEL to look into your recent experience. Unfortunately, we were not able to reach an agreement between you and the accommodation. Customer Service will now look into this issue closely and contac...",
+    },
+  },
+  {
+    id: "r16",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "06 Nov 2025 14:20 pm",
+    from: { value: "ceg-automation-svc", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "Agoda Booking ID 930329922 Check in November 15, 2025",
+      body:
+        "Здравствуйте, Rafael! Вас приветствует Agoda. Мы обращаемся к вам по поводу вашего бронирования № 568534855: Отель: LAGUNE BARRA HOTEL Город: Milan Страна/ регион: Italy Заезд: 15 November 2025 Выезд: 18 November 2025 Мы знаем, что вы бы хотели как можно скорее получить решение по вашему запросу, поэтому просим...",
+    },
+  },
+  {
+    id: "r17",
+    contactType: "email",
+    dateReceived: "-",
+    dateClosedOrSent: "06 Nov 2025 11:15 am",
+    from: { value: "CUSTOMER-SERVICE@AGODA.COM", tag: "System" },
+    to: { value: "rafael.silva@hbxgroup.com", tag: "Customer" },
+    summary: {
+      title: "Booking confirmation with Agoda - Booking ID: 930329922",
+      body:
+        "Your booking is now confirmed! Hi Lucas Heil Figueira Carnevale, For reference, your booking ID is 930329922. To view, cancel, or modify your booking, use our easy self service. Manage My Booking Lagune Barra Hotel 4.0 stars rating out of five 6555 Avenida Salvador Allende, Rio De Janeiro, Brazil, 22783-127 Rio de Janeiro, Brasil Directions Check in Satu...\n1 attachment: Confirmation_for_Booking_ID_#_930329922.pdf",
+    },
+  },
 ];
 
 function ContactPill({
@@ -295,26 +444,27 @@ function ContactPill({
 }) {
   if (type === "system") return null;
   const spec = CONTACT_PILL[type];
-  const ArrowIcon = direction === "inbound" ? SouthEastIcon : NorthWestIcon;
+  const ArrowIcon = direction === "inbound" ? SouthEastIcon : NorthEastIcon;
   return (
-    <Box
+    <Chip
+      size="small"
+      icon={<ArrowIcon sx={{ fontSize: "16px" }} />}
+      label={spec.label}
       sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 0.75,
-        px: 1.25,
-        py: 0.5,
-        borderRadius: "999px",
+        typography: "body2",
         bgcolor: spec.bg,
         color: spec.fg,
-        fontSize: "12px",
-        fontWeight: 600,
-        lineHeight: "16px",
+        "& .MuiChip-label": {
+          fontSize: "inherit",
+          fontWeight: 400,
+        },
+        "& .MuiChip-icon": {
+          ml: "8px",
+          mr: "-4px",
+          color: `${spec.fg} !important`,
+        },
       }}
-    >
-      <ArrowIcon sx={{ fontSize: "16px", color: spec.fg }} />
-      {spec.label}
-    </Box>
+    />
   );
 }
 
@@ -324,32 +474,137 @@ function PartyChip({ tag }: { tag: PartyTag }) {
       label={tag}
       size="small"
       sx={{
-        height: 20,
-        fontSize: "11px",
+        height: 24,
+        typography: "body2",
         bgcolor: "#EEEEEE",
         color: "rgba(0, 0, 0, 0.60)",
         borderRadius: "999px",
+        "& .MuiChip-label": {
+          fontSize: "inherit",
+          fontWeight: 400,
+          px: 1,
+        },
       }}
     />
   );
 }
 
+function isAttachmentLine(line: string) {
+  const trimmed = line.trim();
+  return /^\d+\s+attachment:/.test(trimmed);
+}
+
+function hashToDigits(seed: string, digits = 16) {
+  // Deterministic "fake" UCID generator (no crypto).
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const base = Math.abs(h).toString().padStart(digits, "0");
+  return base.slice(0, digits);
+}
+
+function generateFakeDrawer(row: ActivityRow): ActivityRow["drawer"] | undefined {
+  if (row.contactType === "system") return undefined;
+  // Keep these special drawers unchanged.
+  if (row.id === "r17" || row.id === "r18") return undefined;
+  // Keep any explicitly hardcoded drawer content unchanged.
+  if (row.drawer) return row.drawer;
+
+  const ucid = hashToDigits(`${row.id}-${row.from.value}-${row.to.value}`, 16);
+  const subject = row.summary.title?.trim() || `Message details — ${row.from.value}`;
+
+  // For voice, we intentionally do not generate any call summary content.
+  if (row.contactType === "voice") {
+    return {
+      kind: "email",
+      fromLabel: row.from.value,
+      ucid,
+      subject: "Voice contact",
+      body: [],
+    };
+  }
+
+  const bodyIntro = [
+    "Email received from the internet. If in doubt, don’t click any link nor open any attachment !",
+    "",
+    "Hi team,",
+    "",
+  ];
+
+  const bodyFromSummary = row.summary.body
+    ? [
+        row.summary.body.replace(/\s+/g, " ").trim(),
+        "",
+        "—",
+        "This is simulated drawer content for demo purposes.",
+      ]
+    : ["-", "", "—", "This is simulated drawer content for demo purposes."];
+
+  const participants = [
+    `From: ${row.from.value}`,
+    `To: ${row.to.value}`,
+    row.dateReceived !== "-" ? `Date received: ${row.dateReceived}` : undefined,
+    row.dateClosedOrSent !== "-" ? `Date closed/sent: ${row.dateClosedOrSent}` : undefined,
+  ].filter(Boolean) as string[];
+
+  return {
+    kind: "email",
+    fromLabel: row.from.value,
+    ucid,
+    subject,
+    body: [...bodyIntro, ...participants, "", ...bodyFromSummary],
+  };
+}
+
 export default function ActivityLogTable() {
   const [showSystemLogs, setShowSystemLogs] = useState(false);
+  const [page, setPage] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState(0);
   const [activeRow, setActiveRow] = useState<ActivityRow | null>(null);
+  const [emailRecipient, setEmailRecipient] = useState("");
+  const [resendSuccessOpen, setResendSuccessOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isBookingConfirmationPreview = activeRow?.id === "r17";
+  const isBookingCancellationPreview = activeRow?.id === "r18";
+  const isSpecialEmailPreview = isBookingConfirmationPreview || isBookingCancellationPreview;
+  const isVoiceDrawer = activeRow?.contactType === "voice";
+  const isOutbound = activeRow ? activeRow.dateReceived === "-" : false;
+  const showOutboundEmailFooter =
+    !isSpecialEmailPreview &&
+    !isVoiceDrawer &&
+    activeRow?.contactType === "email" &&
+    activeRow?.drawer?.kind === "email" &&
+    isOutbound;
+  const specialToAddress = isBookingCancellationPreview
+    ? "rafael.silva@hbxgroup.com"
+    : activeRow?.to.value ?? "-";
+
+  const pageSize = 10;
+
+  const visibleRowsAll = useMemo(() => {
+    const base = showSystemLogs ? rowsAll : rowsAll.filter((r) => r.contactType !== "system");
+    return base.map((r) => ({ ...r, drawer: generateFakeDrawer(r) }));
+  }, [showSystemLogs]);
+
+  const totalRows = visibleRowsAll.length;
+  const pageCount = Math.max(1, Math.ceil(totalRows / pageSize));
+  const safePage = Math.min(page, pageCount - 1);
 
   const visibleRows = useMemo(() => {
-    if (showSystemLogs) return rowsAll;
-    return rowsAll.filter((r) => r.contactType !== "system");
-  }, [showSystemLogs]);
+    const start = safePage * pageSize;
+    return visibleRowsAll.slice(start, start + pageSize);
+  }, [safePage, visibleRowsAll]);
 
   const handleOpenDrawer = (row: ActivityRow) => {
     setActiveRow(row);
     setDrawerTab(0);
     setDrawerOpen(true);
+    if (row.id === "r17") setEmailRecipient(row.to.value);
+    if (row.id === "r18") setEmailRecipient("rafael.silva@hbxgroup.com");
+    if (row.contactType === "email" && row.id !== "r18") setEmailRecipient(row.to.value);
   };
 
   return (
@@ -373,7 +628,10 @@ export default function ActivityLogTable() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Switch
               checked={showSystemLogs}
-              onChange={(_, checked) => setShowSystemLogs(checked)}
+              onChange={(_, checked) => {
+                setShowSystemLogs(checked);
+                setPage(0);
+              }}
             />
             <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.87)" }}>
               Show system logs
@@ -394,14 +652,23 @@ export default function ActivityLogTable() {
         <Table
           size="small"
           sx={{
+            tableLayout: "fixed",
             "& td, & th": {
               borderRightWidth: 1,
               borderRightStyle: "solid",
               borderRightColor: "divider", // elevation/outlined token
+              typography: "body2",
             },
             "& td:last-child, & th:last-child": { borderRight: 0 },
           }}
         >
+          <colgroup>
+            <col style={{ width: 150 }} />
+            <col style={{ width: 180 }} />
+            <col style={{ width: 240 }} />
+            <col style={{ width: 240 }} />
+            <col />
+          </colgroup>
           <TableHead>
             <TableRow
               sx={{
@@ -414,116 +681,147 @@ export default function ActivityLogTable() {
                 "& > th:last-of-type": { borderRight: 0 },
               }}
             >
-              <TableCell sx={{ fontWeight: 600, fontSize: "12px", width: 120 }}>
+              <TableCell sx={{ fontWeight: 600, width: 150 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   Contact
                 </Box>
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "12px", width: 180 }}>
-                Date received
+              <TableCell sx={{ fontWeight: 600, width: 180 }}>
+                Date &amp; time
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "12px", width: 180 }}>
-                Date closed or sent
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "12px", width: 240 }}>
+              <TableCell sx={{ fontWeight: 600, width: 240 }}>
                 From
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "12px", width: 240 }}>
+              <TableCell sx={{ fontWeight: 600, width: 240 }}>
                 To
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "12px" }}>Summary</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Summary</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {visibleRows.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{
-                  "&:hover": { bgcolor: "#FAFAFA" },
-                  "&:last-child td, &:last-child th": { borderBottom: 0 },
-                }}
-              >
-                <TableCell sx={{ fontSize: "13px", verticalAlign: "top", py: 2 }}>
+            {visibleRows.map((row) => {
+              const isInteractive =
+                row.id === "r17" || row.id === "r18" || Boolean(row.drawer);
+              return (
+                <TableRow
+                  key={row.id}
+                  sx={{
+                    ...(isInteractive ? { "&:hover": { bgcolor: "#FAFAFA" } } : null),
+                    "&:last-child td, &:last-child th": { borderBottom: 0 },
+                    cursor: isInteractive ? "pointer" : "default",
+                    ...(drawerOpen && activeRow?.id === row.id
+                      ? { bgcolor: "#E3F2FD" }
+                      : null),
+                  }}
+                  onClick={isInteractive ? () => handleOpenDrawer(row) : undefined}
+                >
+                <TableCell sx={{ verticalAlign: "top", py: 2 }}>
                   {row.contactType === "system" ? (
-                    <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.60)" }}>
+                    <Typography variant="inherit" sx={{ color: "text.secondary" }}>
                       -
                     </Typography>
                   ) : (
                     <ContactPill
                       type={row.contactType}
                       direction={
-                        row.dateReceived !== "-" && row.dateClosedOrSent !== "-"
-                          ? "inbound"
-                          : "outbound"
+                        row.dateReceived !== "-" ? "inbound" : "outbound"
                       }
                     />
                   )}
                 </TableCell>
-                <TableCell sx={{ fontSize: "13px", verticalAlign: "top", py: 2 }}>
-                  {row.dateReceived}
+                <TableCell sx={{ verticalAlign: "top", py: 2 }}>
+                  {row.dateReceived !== "-" ? row.dateReceived : row.dateClosedOrSent}
                 </TableCell>
-                <TableCell sx={{ fontSize: "13px", verticalAlign: "top", py: 2 }}>
-                  {row.dateClosedOrSent}
-                </TableCell>
-                <TableCell sx={{ fontSize: "13px", verticalAlign: "top", py: 2 }}>
-                  <Typography sx={{ fontSize: "13px" }}>{row.from.value}</Typography>
-                  {row.from.subValue ? (
-                    <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
-                      {row.from.subValue}
-                    </Typography>
-                  ) : null}
+                <TableCell sx={{ verticalAlign: "top", py: 2 }}>
+                  <Typography
+                    variant="inherit"
+                    component="div"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    <Box component="span" sx={{ display: "block", color: "text.primary" }}>
+                      {row.from.value}
+                    </Box>
+                    {row.from.subValue ? (
+                      <Box component="span" sx={{ display: "block", color: "text.secondary" }}>
+                        {row.from.subValue}
+                      </Box>
+                    ) : null}
+                  </Typography>
                   {row.from.tag ? (
                     <Box sx={{ mt: 0.75 }}>
                       <PartyChip tag={row.from.tag} />
                     </Box>
                   ) : null}
                 </TableCell>
-                <TableCell sx={{ fontSize: "13px", verticalAlign: "top", py: 2 }}>
-                  <Typography sx={{ fontSize: "13px" }}>{row.to.value}</Typography>
-                  {row.to.subValue ? (
-                    <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
-                      {row.to.subValue}
-                    </Typography>
-                  ) : null}
+                <TableCell sx={{ verticalAlign: "top", py: 2 }}>
+                  <Typography
+                    variant="inherit"
+                    component="div"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    <Box component="span" sx={{ display: "block", color: "text.primary" }}>
+                      {row.to.value}
+                    </Box>
+                    {row.to.subValue ? (
+                      <Box component="span" sx={{ display: "block", color: "text.secondary" }}>
+                        {row.to.subValue}
+                      </Box>
+                    ) : null}
+                  </Typography>
                   {row.to.tag ? (
                     <Box sx={{ mt: 0.75 }}>
                       <PartyChip tag={row.to.tag} />
                     </Box>
                   ) : null}
                 </TableCell>
-                <TableCell sx={{ fontSize: "13px", verticalAlign: "top", py: 2 }}>
+                <TableCell sx={{ verticalAlign: "top", py: 2 }}>
                   {row.summary.title ? (
-                    <Typography sx={{ fontSize: "12px", fontWeight: 600, mb: 0.5 }}>
+                    <Typography variant="inherit" sx={{ fontWeight: 600, mb: 0.5 }}>
                       {row.summary.title}
                     </Typography>
                   ) : null}
-                  <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.87)" }}>
-                    {row.summary.body}
-                  </Typography>
-                  {row.summary.linkLabel ? (
-                    <Box sx={{ mt: 1 }}>
-                      <Button
-                        variant="text"
-                        size="small"
-                        onClick={() => handleOpenDrawer(row)}
-                        endIcon={<ChevronRightIcon sx={{ fontSize: "16px" }} />}
+                  <Typography
+                    variant="inherit"
+                    component="div"
+                    sx={{
+                      color: "text.primary",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {row.summary.body.split("\n").map((line, idx) => (
+                      <Box
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={`${row.id}-summary-line-${idx}`}
+                        component="span"
                         sx={{
-                          textTransform: "none",
-                          fontSize: "12px",
-                          minWidth: 0,
-                          px: 0,
-                          py: 0,
-                          lineHeight: "16px",
+                          display: "block",
+                          color: isAttachmentLine(line) ? "text.secondary" : "text.primary",
                         }}
                       >
-                        {row.summary.linkLabel}
-                      </Button>
-                    </Box>
-                  ) : null}
+                        {line === "" ? "\u00A0" : line}
+                      </Box>
+                    ))}
+                  </Typography>
                 </TableCell>
-              </TableRow>
-            ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -531,13 +829,26 @@ export default function ActivityLogTable() {
       {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mt: 1.5, gap: 2 }}>
         <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
-          1-10 of 28
+          {totalRows === 0
+            ? "0-0 of 0"
+            : `${safePage * pageSize + 1}-${Math.min(
+                (safePage + 1) * pageSize,
+                totalRows,
+              )} of ${totalRows}`}
         </Typography>
         <Box sx={{ display: "flex", gap: 0.5 }}>
-          <IconButton size="small" disabled>
+          <IconButton
+            size="small"
+            disabled={safePage === 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+          >
             <ChevronLeftIcon sx={{ fontSize: "18px" }} />
           </IconButton>
-          <IconButton size="small">
+          <IconButton
+            size="small"
+            disabled={safePage >= pageCount - 1}
+            onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+          >
             <ChevronRightIcon sx={{ fontSize: "18px" }} />
           </IconButton>
         </Box>
@@ -546,13 +857,20 @@ export default function ActivityLogTable() {
       <Drawer
         anchor="right"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false);
+          setResendSuccessOpen(false);
+        }}
         hideBackdrop
         ModalProps={{
           disableScrollLock: true,
           disablePortal: true,
           keepMounted: true,
           container: containerRef.current,
+          disableEnforceFocus: true,
+          disableAutoFocus: true,
+          disableRestoreFocus: true,
+          sx: { pointerEvents: "none" },
         }}
         PaperProps={{
           sx: {
@@ -561,6 +879,7 @@ export default function ActivityLogTable() {
             position: "absolute",
             top: 0,
             bottom: 0,
+            pointerEvents: "auto",
           },
         }}
       >
@@ -571,33 +890,56 @@ export default function ActivityLogTable() {
               px: 2.5,
               py: 2,
               display: "flex",
-              alignItems: "flex-start",
+              alignItems: "center",
               justifyContent: "space-between",
               gap: 2,
+              position: "sticky",
+              top: 0,
+              zIndex: 2,
+              bgcolor: "background.paper",
+              borderBottom: "1px solid",
+              borderBottomColor: "divider",
             }}
           >
             <Box sx={{ minWidth: 0 }}>
-              <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
-                From: {activeRow?.drawer?.fromLabel ?? activeRow?.from.value ?? "-"}
+              <Typography sx={{ fontSize: "16px", fontWeight: 600, lineHeight: 1.2 }}>
+                {isSpecialEmailPreview
+                  ? `To: ${specialToAddress}`
+                  : activeRow?.contactType === "email" && activeRow?.drawer?.kind === "email"
+                    ? isOutbound
+                      ? `To: ${activeRow?.to.value ?? "-"}`
+                      : `From: ${activeRow?.from.value ?? "-"}`
+                  : activeRow?.drawer?.kind === "conversation"
+                    ? `${activeRow?.drawer?.fromLabel ?? activeRow?.from.value ?? "-"}`
+                    : `From: ${activeRow?.drawer?.fromLabel ?? activeRow?.from.value ?? "-"}`}
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-                <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
-                  UCID:
-                </Typography>
-                <Typography sx={{ fontSize: "12px", color: "primary.main" }}>
-                  {activeRow?.drawer?.ucid ?? "-"}
-                </Typography>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    const ucid = activeRow?.drawer?.ucid;
-                    if (ucid) navigator.clipboard.writeText(ucid);
-                  }}
-                  sx={{ p: 0.25, color: "rgba(0, 0, 0, 0.54)" }}
-                >
-                  <CopyIcon sx={{ fontSize: "16px" }} />
-                </IconButton>
-              </Box>
+              {isSpecialEmailPreview ? null : (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+                  <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
+                    UCID:
+                  </Typography>
+                  <Button
+                    variant="text"
+                    size="small"
+                    endIcon={<CopyIcon sx={{ fontSize: "16px" }} />}
+                    onClick={() => {
+                      const ucid = activeRow?.drawer?.ucid;
+                      if (ucid) navigator.clipboard.writeText(ucid);
+                    }}
+                    sx={{
+                      p: 0,
+                      minWidth: 0,
+                      textTransform: "none",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      lineHeight: 1.2,
+                      "& .MuiButton-endIcon": { ml: 0.5 },
+                    }}
+                  >
+                    {activeRow?.drawer?.ucid ?? "-"}
+                  </Button>
+                </Box>
+              )}
             </Box>
             <IconButton
               onClick={() => setDrawerOpen(false)}
@@ -607,169 +949,725 @@ export default function ActivityLogTable() {
             </IconButton>
           </Box>
 
-          {/* Drawer tabs */}
-          <Tabs
-            value={drawerTab}
-            onChange={(_, v) => setDrawerTab(v)}
-            sx={{
-              px: 2.5,
-              minHeight: 44,
-              "& .MuiTabs-indicator": { bgcolor: "primary.main", height: 2 },
-              "& .MuiTab-root": {
-                minHeight: 44,
-                textTransform: "none",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "rgba(0, 0, 0, 0.60)",
-                "&.Mui-selected": { color: "primary.main" },
-              },
-            }}
-          >
-            {activeRow?.drawer?.kind === "conversation" ? (
-              <Tab
-                icon={<ConversationIcon sx={{ fontSize: "18px" }} />}
-                iconPosition="start"
-                label="Conversation"
-              />
-            ) : (
-              <Tab
-                icon={<EmailIcon sx={{ fontSize: "18px" }} />}
-                iconPosition="start"
-                label="Email"
-              />
-            )}
-            <Tab
-              icon={<DetailsIcon sx={{ fontSize: "18px" }} />}
-              iconPosition="start"
-              label="Details"
-              sx={{ ml: "auto" }}
-            />
-          </Tabs>
-          <Divider />
-
-          {/* Drawer content */}
-          <Box sx={{ p: 2.5, overflow: "auto", flex: 1 }}>
-            {drawerTab === 0 ? (
-              <Paper
-                variant="outlined"
-                sx={{ borderColor: "divider", borderRadius: "4px", p: 2 }}
+          {isSpecialEmailPreview || isVoiceDrawer ? null : (
+            <>
+              {/* Drawer tabs */}
+              <Tabs
+                value={drawerTab}
+                onChange={(_, v) => setDrawerTab(v)}
+                variant="fullWidth"
+                sx={{
+                  px: 2.5,
+                  minHeight: 44,
+                  "& .MuiTabs-indicator": { bgcolor: "primary.main", height: 2 },
+                  "& .MuiTab-root": {
+                    flex: 1,
+                    minHeight: 44,
+                    textTransform: "none",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "rgba(0, 0, 0, 0.60)",
+                    "&.Mui-selected": { color: "primary.main" },
+                  },
+                }}
               >
                 {activeRow?.drawer?.kind === "conversation" ? (
-                  <>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 2,
-                        mb: 1.5,
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "13px", fontWeight: 600 }}>
-                        Conversation ID:
-                      </Typography>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
-                        <Typography
-                          sx={{
-                            fontSize: "12px",
-                            color: "primary.main",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: 360,
-                          }}
-                        >
-                          {activeRow.drawer.subject}
-                        </Typography>
-                        <IconButton
-                          size="small"
-                          onClick={() => navigator.clipboard.writeText(activeRow.drawer!.subject)}
-                          sx={{ p: 0.25, color: "rgba(0, 0, 0, 0.54)" }}
-                        >
-                          <CopyIcon sx={{ fontSize: "16px" }} />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                    <Divider sx={{ mb: 1.5 }} />
+                  <Tab
+                    icon={<ConversationIcon sx={{ fontSize: "18px" }} />}
+                    iconPosition="start"
+                    label="Conversation"
+                  />
+                ) : (
+                  <Tab
+                    icon={<EmailIcon sx={{ fontSize: "18px" }} />}
+                    iconPosition="start"
+                    label="Email"
+                  />
+                )}
+                <Tab
+                  icon={<DetailsIcon sx={{ fontSize: "18px" }} />}
+                  iconPosition="start"
+                  label="Details"
+                />
+              </Tabs>
+              <Divider />
+            </>
+          )}
 
+          {/* Drawer content */}
+          {isSpecialEmailPreview ? (
+            <>
+              <Box
+                sx={{
+                  px: 2.5,
+                  pt: 2,
+                  pb: 2.5,
+                  overflow: "auto",
+                  flex: 1,
+                  bgcolor: "grey.50",
+                }}
+              >
+                <Paper variant="outlined" sx={{ borderColor: "divider", borderRadius: "8px" }}>
+                  <Box sx={{ p: 2 }}>
+                    <Typography sx={{ fontSize: "16px", fontWeight: 600, mb: 0.5 }}>
+                      {isBookingCancellationPreview
+                        ? "Agoda has cancelled your booking -- Booking ID: 930329922"
+                        : "Booking confirmation with Agoda - Booking ID: 930329922"}
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+                      <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
+                        Attachments:
+                      </Typography>
+                      <Button
+                        variant="text"
+                        size="small"
+                        sx={{
+                          p: 0,
+                          minWidth: 0,
+                          textTransform: "none",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          lineHeight: 1.2,
+                          textDecoration: "underline",
+                          "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
+                        }}
+                      >
+                        Confirmation_for_Booking_ID_#_930329922.pdf
+                      </Button>
+                    </Box>
+                  </Box>
+                  <Divider />
+
+                  {/* "PDF" preview content */}
+                  <Box sx={{ p: 2 }}>
                     <Box
                       sx={{
-                        bgcolor: "#EEF3FB",
+                        bgcolor: "#EAF2FF",
+                        border: "1px solid",
+                        borderColor: "divider",
                         borderRadius: "8px",
                         p: 2,
                       }}
                     >
-                      {activeRow.drawer.body.map((line, idx) => (
-                        <Typography
-                          key={`${idx}-${line}`}
-                          sx={{
-                            fontSize: "12px",
-                            color: "rgba(0, 0, 0, 0.87)",
-                            lineHeight: "18px",
-                            whiteSpace: "pre-wrap",
-                            mb: line === "" ? 1 : 0.5,
-                          }}
-                        >
-                          {line === "" ? "\u00A0" : line}
+                      <Box sx={{ textAlign: "center", mb: 2 }}>
+                        <Typography sx={{ fontSize: "22px", fontWeight: 700, color: "#7A7A7A" }}>
+                          agoda
                         </Typography>
-                      ))}
-                    </Box>
-                  </>
-                ) : (
-                  <>
-                    <Typography sx={{ fontSize: "14px", fontWeight: 600, mb: 1 }}>
-                      {activeRow?.drawer?.subject ?? activeRow?.summary.title ?? "-"}
-                    </Typography>
-                    <Divider sx={{ mb: 1.5 }} />
+                        <Box sx={{ display: "flex", justifyContent: "center", gap: 0.75, mt: 0.5 }}>
+                          {["#E53935", "#FB8C00", "#FDD835", "#43A047", "#1E88E5"].map((c) => (
+                            <Box
+                              key={c}
+                              sx={{ width: 8, height: 8, borderRadius: "999px", bgcolor: c }}
+                            />
+                          ))}
+                        </Box>
+                      </Box>
 
-                    {activeRow?.drawer?.body?.length ? (
-                      <>
-                        {/* First line is the safety warning in screenshot */}
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          border: "1px solid",
+                          borderColor: "divider",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          mb: 2,
+                        }}
+                      >
                         <Box
                           sx={{
-                            border: "1px dotted",
-                            borderColor: "#FB8C00",
-                            bgcolor: "#FFF3E0",
-                            color: "rgba(0, 0, 0, 0.87)",
-                            px: 1.5,
-                            py: 1,
-                            fontSize: "12px",
-                            mb: 2,
+                            height: 6,
+                            bgcolor: isBookingCancellationPreview ? "#263238" : "#1B5E20",
                           }}
-                        >
-                          {activeRow.drawer.body[0]}
+                        />
+                        <Box sx={{ p: 3 }}>
+                          {isBookingCancellationPreview ? (
+                            <>
+                              <Typography
+                                sx={{
+                                  fontSize: "14px",
+                                  fontWeight: 700,
+                                  color: "rgba(0, 0, 0, 0.87)",
+                                  textAlign: "center",
+                                  mb: 1.5,
+                                }}
+                              >
+                                We&apos;re sorry, your booking has been cancelled by the supplier.
+                              </Typography>
+                              <Typography sx={{ fontSize: "13px", textAlign: "center", mb: 2 }}>
+                                Hi Lucas Heil Figueira Carnevale,
+                                <br />
+                                Your booking has been cancelled for free. Any payment made for this
+                                booking will be refunded.
+                              </Typography>
+                              <Box sx={{ display: "flex", justifyContent: "center", gap: 1.5 }}>
+                                <Button
+                                  variant="contained"
+                                  disableElevation
+                                  sx={{
+                                    textTransform: "none",
+                                    borderRadius: "999px",
+                                    px: 3,
+                                  }}
+                                >
+                                  Make another booking
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  sx={{
+                                    textTransform: "none",
+                                    borderRadius: "999px",
+                                    px: 3,
+                                  }}
+                                >
+                                  Book another room
+                                </Button>
+                              </Box>
+                            </>
+                          ) : (
+                            <>
+                              <Typography
+                                sx={{
+                                  fontSize: "18px",
+                                  fontWeight: 700,
+                                  color: "#1B5E20",
+                                  textAlign: "center",
+                                  mb: 1,
+                                }}
+                              >
+                                Your booking is now confirmed!
+                              </Typography>
+                              <Typography sx={{ fontSize: "13px", textAlign: "center", mb: 2 }}>
+                                Hi Lucas Heil Figueira Carnevale,
+                                <br />
+                                For reference, your booking ID is 930329922. To view, cancel, or
+                                modify your booking, use our easy self service.
+                              </Typography>
+                              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                <Button
+                                  variant="contained"
+                                  disableElevation
+                                  sx={{
+                                    textTransform: "none",
+                                    borderRadius: "999px",
+                                    px: 4,
+                                  }}
+                                >
+                                  Manage my booking
+                                </Button>
+                              </Box>
+                            </>
+                          )}
                         </Box>
-                        {activeRow.drawer.body.slice(1).map((line, idx) => (
-                          <Typography
-                            key={`${idx}-${line}`}
+                      </Paper>
+
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          border: "1px solid",
+                          borderColor: "divider",
+                          borderRadius: "8px",
+                          p: 2.5,
+                        }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                          <Typography sx={{ fontSize: "16px", fontWeight: 700 }}>
+                            Lagune Barra Hotel
+                          </Typography>
+                          <Typography sx={{ fontSize: "12px", color: "#FB8C00" }}>★★★★☆</Typography>
+                        </Box>
+
+                        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2, mb: 2 }}>
+                          <Box
                             sx={{
-                              fontSize: "13px",
-                              color: "rgba(0, 0, 0, 0.87)",
-                              lineHeight: "20px",
-                              whiteSpace: "pre-wrap",
-                              mb: line === "" ? 1 : 0.75,
+                              width: 140,
+                              height: 56,
+                              borderRadius: "6px",
+                              bgcolor: "grey.100",
+                              border: "1px solid",
+                              borderColor: "divider",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "rgba(0, 0, 0, 0.60)",
+                              fontSize: "12px",
                             }}
                           >
-                            {line === "" ? "\u00A0" : line}
+                            property image
+                          </Box>
+
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.87)", mb: 0.5 }}>
+                              6555 Avenida Salvador Allende, Rio De Janeiro, Brazil, 22783-127
+                            </Typography>
+                            <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
+                              Rio de Janeiro, Brasil
+                            </Typography>
+                            <Button
+                              variant="text"
+                              size="small"
+                              sx={{
+                                p: 0,
+                                mt: 0.5,
+                                minWidth: 0,
+                                textTransform: "none",
+                                fontSize: "12px",
+                                textDecoration: "underline",
+                                "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
+                              }}
+                            >
+                              Directions
+                            </Button>
+                          </Box>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "stretch",
+                            gap: 2,
+                            py: 1.5,
+                            borderTop: "1px solid",
+                            borderTopColor: "divider",
+                            borderBottom: "1px solid",
+                            borderBottomColor: "divider",
+                          }}
+                        >
+                          <Box sx={{ flex: 1 }}>
+                            <Typography sx={{ fontSize: "11px", color: "rgba(0, 0, 0, 0.60)" }}>
+                              Check in
+                            </Typography>
+                            <Typography sx={{ fontSize: "12px", fontWeight: 600 }}>
+                              Saturday November 15, 2025
+                              <br />
+                              <span style={{ fontWeight: 400 }}>(after 3:00 PM)</span>
+                            </Typography>
+                          </Box>
+                          <Divider orientation="vertical" flexItem />
+                          <Box sx={{ flex: 1, textAlign: "right" }}>
+                            <Typography sx={{ fontSize: "11px", color: "rgba(0, 0, 0, 0.60)" }}>
+                              Check out
+                            </Typography>
+                            <Typography sx={{ fontSize: "12px", fontWeight: 600 }}>
+                              Sunday November 16, 2025
+                              <br />
+                              <span style={{ fontWeight: 400 }}>(before 12:00 PM)</span>
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)", mt: 1.5 }}>
+                          You can also easily find out about property policies and amenities in{" "}
+                          <Button
+                            variant="text"
+                            size="small"
+                            sx={{
+                              p: 0,
+                              minWidth: 0,
+                              textTransform: "none",
+                              fontSize: "12px",
+                              textDecoration: "underline",
+                              "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
+                            }}
+                          >
+                            Manage my booking
+                          </Button>
+                        </Typography>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography sx={{ fontSize: "13px", fontWeight: 700, mb: 1 }}>
+                          Contact property
+                        </Typography>
+                        <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)", mb: 1 }}>
+                          For any questions related to the property, please contact them directly.
+                        </Typography>
+                        <Box
+                          sx={{
+                            border: "1px solid",
+                            borderColor: "primary.main",
+                            borderRadius: "8px",
+                            p: 2,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <MailOutlineIcon sx={{ fontSize: 18, color: "primary.main" }} />
+                          <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "primary.main" }}>
+                            reservas@lagunebarrahotel.com.br
                           </Typography>
-                        ))}
-                      </>
-                    ) : (
-                      <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.87)" }}>
-                        {activeRow?.summary.body ?? "-"}
+                        </Box>
+                      </Paper>
+                    </Box>
+                  </Box>
+                </Paper>
+              </Box>
+
+              {/* Footer (recipient + resend) */}
+              <Box
+                sx={{
+                  position: "sticky",
+                  bottom: 0,
+                  zIndex: 2,
+                  bgcolor: "background.paper",
+                  borderTop: "1px solid",
+                  borderTopColor: "divider",
+                  px: 2.5,
+                  py: 1.5,
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-end",
+                  gap: 2,
+                  boxShadow: "0 -1px 0 rgba(0, 0, 0, 0.08)",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2 }}>
+                  <TextField
+                    label="Email recipient"
+                    size="small"
+                    variant="outlined"
+                    value={emailRecipient || (isBookingCancellationPreview ? specialToAddress : activeRow?.to.value) || ""}
+                    onChange={(e) => setEmailRecipient(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ minWidth: 320 }}
+                  />
+                  <Button
+                    variant="contained"
+                    disableElevation
+                    sx={{ textTransform: "none" }}
+                    onClick={() => setResendSuccessOpen(true)}
+                  >
+                    Resend
+                  </Button>
+                </Box>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box sx={{ p: 2.5, overflow: "auto", flex: 1, bgcolor: "grey.50" }}>
+              {isVoiceDrawer ? (
+                <Paper variant="outlined" sx={{ borderColor: "divider", borderRadius: "8px", p: 2 }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <Box>
+                      <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+                        Disposition code:
                       </Typography>
-                    )}
-                  </>
-                )}
-              </Paper>
-            ) : (
-              <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.60)" }}>
-                Details view (mock)
-              </Typography>
-            )}
-          </Box>
+                      <Typography sx={{ fontSize: "13px", color: "text.primary" }}>-</Typography>
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+                        Skillset:
+                      </Typography>
+                      <Typography sx={{ fontSize: "13px", color: "text.primary" }}>EN</Typography>
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+                        Category:
+                      </Typography>
+                      <Typography sx={{ fontSize: "13px", color: "text.primary" }}>-</Typography>
+                    </Box>
+                  </Box>
+                </Paper>
+              ) : drawerTab === 0 ? (
+                <Paper
+                  variant="outlined"
+                  sx={{ borderColor: "divider", borderRadius: "4px", p: 2 }}
+                >
+                  {activeRow?.drawer?.kind === "conversation" ? (
+                    <>
+                      {/* Collapsed / expanded conversation headers */}
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.25, mb: 1.5 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 2,
+                          }}
+                        >
+                          <Typography sx={{ fontSize: "13px", fontWeight: 600 }}>
+                            06 Nov 2025, 04:38 pm | Swenka Shourya, VIVR
+                          </Typography>
+                          <KeyboardArrowDownIcon sx={{ color: "rgba(0, 0, 0, 0.54)" }} />
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 2,
+                          }}
+                        >
+                          <Typography sx={{ fontSize: "13px", fontWeight: 600 }}>
+                            10 Nov 2025, 06:04 pm | Kadimbung Kamson, VIVR
+                          </Typography>
+                          <KeyboardArrowUpIcon sx={{ color: "rgba(0, 0, 0, 0.54)" }} />
+                        </Box>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 2,
+                          mb: 1.5,
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "12px", color: "rgba(0, 0, 0, 0.60)" }}>
+                          Conversation ID:
+                        </Typography>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, minWidth: 0 }}>
+                          <Typography
+                            sx={{
+                              fontSize: "12px",
+                              color: "primary.main",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              maxWidth: 360,
+                            }}
+                          >
+                            {activeRow.drawer.subject}
+                          </Typography>
+                          <IconButton
+                            size="small"
+                            onClick={() => navigator.clipboard.writeText(activeRow.drawer!.subject)}
+                            sx={{ p: 0.25, color: "rgba(0, 0, 0, 0.54)" }}
+                          >
+                            <CopyIcon sx={{ fontSize: "16px" }} />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                      <Divider sx={{ mb: 1.5 }} />
+
+                      {/* Chat transcript */}
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        {[0, 1].map((n) => (
+                          <Box key={n} sx={{ alignSelf: "flex-end", maxWidth: 420 }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                alignItems: "center",
+                                gap: 1,
+                                mb: 0.5,
+                              }}
+                            >
+                              <Typography sx={{ fontSize: "11px", color: "rgba(0, 0, 0, 0.54)" }}>
+                                VIVR 11/6/2025, 4:38:43 PM
+                              </Typography>
+                              <SmileyIcon sx={{ fontSize: 14, color: "#FBC02D" }} />
+                            </Box>
+
+                            <Box
+                              sx={{
+                                bgcolor: "#EEF0F2",
+                                borderRadius: "10px",
+                                p: 2,
+                                whiteSpace: "pre-wrap",
+                                fontSize: "12px",
+                                color: "rgba(0, 0, 0, 0.87)",
+                              }}
+                            >
+                              {activeRow.drawer.body.join("\n")}
+                            </Box>
+                          </Box>
+                        ))}
+
+                        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, maxWidth: 460 }}>
+                          <Box
+                            sx={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: "999px",
+                              bgcolor: "#EDE7F6",
+                              color: "#5E35B1",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flex: "0 0 auto",
+                            }}
+                          >
+                            <PersonIcon sx={{ fontSize: 18 }} />
+                          </Box>
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography sx={{ fontSize: "11px", color: "rgba(0, 0, 0, 0.54)", mb: 0.25 }}>
+                              Lucas Heil Figueira Carnevale 10/09 8:59 pm
+                            </Typography>
+                            <Box
+                              sx={{
+                                bgcolor: "#EEF0F2",
+                                borderRadius: "10px",
+                                p: 2,
+                                fontSize: "12px",
+                                color: "rgba(0, 0, 0, 0.87)",
+                                whiteSpace: "pre-wrap",
+                              }}
+                            >
+                              In order to keep your log-in status, do not edit or share this message.
+                              Please press send to continue:{" "}
+                              {"MB_BJL: NWJkNGY5YTEtMTQ2Ny00ZTYyLTg3OTUtZWZhMGZkMjRkNmJh"}
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </>
+                  ) : (
+                    <>
+                      <Typography sx={{ fontSize: "14px", fontWeight: 600, mb: 1 }}>
+                        {activeRow?.drawer?.subject ?? activeRow?.summary.title ?? "-"}
+                      </Typography>
+                      <Divider sx={{ mb: 1.5 }} />
+
+                      {activeRow?.drawer?.body?.length ? (
+                        <>
+                          {/* First line is the safety warning in screenshot */}
+                          <Box
+                            sx={{
+                              border: "1px dotted",
+                              borderColor: "#FB8C00",
+                              bgcolor: "#FFF3E0",
+                              color: "rgba(0, 0, 0, 0.87)",
+                              px: 1.5,
+                              py: 1,
+                              fontSize: "12px",
+                              mb: 2,
+                            }}
+                          >
+                            {activeRow.drawer.body[0]}
+                          </Box>
+                          {activeRow.drawer.body.slice(1).map((line, idx) => (
+                            <Typography
+                              key={`${idx}-${line}`}
+                              sx={{
+                                fontSize: "13px",
+                                color: "rgba(0, 0, 0, 0.87)",
+                                lineHeight: "20px",
+                                whiteSpace: "pre-wrap",
+                                mb: line === "" ? 1 : 0.75,
+                              }}
+                            >
+                              {line === "" ? "\u00A0" : line}
+                            </Typography>
+                          ))}
+                        </>
+                      ) : (
+                        <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.87)" }}>
+                          {activeRow?.summary.body ?? "-"}
+                        </Typography>
+                      )}
+                    </>
+                  )}
+                </Paper>
+              ) : (
+                <Paper variant="outlined" sx={{ borderColor: "divider", borderRadius: "8px", p: 2 }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <Box>
+                      <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+                        Disposition code:
+                      </Typography>
+                      <Typography sx={{ fontSize: "13px", color: "text.primary" }}>-</Typography>
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+                        Skillset:
+                      </Typography>
+                      <Typography sx={{ fontSize: "13px", color: "text.primary" }}>EN</Typography>
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+                        Category:
+                      </Typography>
+                      <Typography sx={{ fontSize: "13px", color: "text.primary" }}>-</Typography>
+                    </Box>
+                  </Box>
+                </Paper>
+              )}
+              </Box>
+
+              {showOutboundEmailFooter ? (
+                <Box
+                  sx={{
+                    position: "sticky",
+                    bottom: 0,
+                    zIndex: 2,
+                    bgcolor: "background.paper",
+                    borderTop: "1px solid",
+                    borderTopColor: "divider",
+                    px: 2.5,
+                    py: 1.5,
+                    display: "flex",
+                    alignItems: "flex-end",
+                    justifyContent: "flex-end",
+                    gap: 2,
+                    boxShadow: "0 -1px 0 rgba(0, 0, 0, 0.08)",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "flex-end", gap: 2 }}>
+                    <TextField
+                      label="Email recipient"
+                      size="small"
+                      variant="outlined"
+                      value={emailRecipient || activeRow?.to.value || ""}
+                      onChange={(e) => setEmailRecipient(e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      sx={{ minWidth: 320 }}
+                    />
+                    <Button
+                      variant="contained"
+                      disableElevation
+                      sx={{ textTransform: "none" }}
+                      onClick={() => setResendSuccessOpen(true)}
+                    >
+                      Resend
+                    </Button>
+                  </Box>
+                </Box>
+              ) : null}
+            </>
+          )}
         </Box>
       </Drawer>
+
+      <Dialog
+        open={resendSuccessOpen}
+        onClose={() => setResendSuccessOpen(false)}
+        aria-labelledby="resend-success-title"
+      >
+        <DialogTitle
+          id="resend-success-title"
+          sx={{
+            fontSize: "16px",
+            fontWeight: 600,
+            pr: 6,
+          }}
+        >
+          Done
+          <IconButton
+            onClick={() => setResendSuccessOpen(false)}
+            sx={{ position: "absolute", right: 8, top: 8, color: "rgba(0, 0, 0, 0.54)" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 1 }}>
+          <Typography sx={{ fontSize: "13px", color: "rgba(0, 0, 0, 0.87)" }}>
+            Email has been sent successfully.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            variant="text"
+            onClick={() => setResendSuccessOpen(false)}
+            sx={{ textTransform: "none" }}
+          >
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
