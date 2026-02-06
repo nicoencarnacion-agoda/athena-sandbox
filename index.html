@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <script>
+    <script type="module">
       // Only run Maze in production builds.
-      if ("%MODE%" === "production") {
+      if (import.meta.env.PROD) {
         (function (m, a, z, e) {
           var s, t, u, v;
           try {
